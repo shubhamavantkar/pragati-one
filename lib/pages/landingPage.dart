@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/pages/adminLoginPage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/languagesModalSheet.dart';
 
@@ -77,7 +78,7 @@ class LandingPage extends StatelessWidget {
                 Text(
                   'Your All-in-One Construction Management Solution!',
                   style: TextStyle(
-                      fontSize: w * 0.035,
+                      fontSize: w * 0.045,
                       fontWeight: FontWeight.w700,
                       height: 1.4),
                 ),
@@ -87,7 +88,7 @@ class LandingPage extends StatelessWidget {
                 Text(
                   'Manage projects, track materials, handle vendors, and streamline workflows with ease. Pragati empowers contractors to focus on building while we simplify the rest”',
                   style: TextStyle(
-                    fontSize: w * 0.025,
+                    fontSize: w * 0.035,
                     height: 1.4,
                     color: Colors.grey,
                     fontWeight: FontWeight.w600,
@@ -98,16 +99,29 @@ class LandingPage extends StatelessWidget {
                   height: 30,
                 ),
                 PragatiButton(
-                  onPressed: () {},
-                  text: 'Owner',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminLoginPage(),
+                        ));
+                  },
+                  child: Text(
+                    'Owner',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
                 PragatiButton(
                   onPressed: () {},
-                  text: 'Supervisor',
                   outlinedButton: true,
+                  child: Text(
+                    'Supervisor',
+                    style: TextStyle(
+                        color: primaryColor, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

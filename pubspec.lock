@@ -139,6 +139,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  phonenumbers:
+    dependency: "direct main"
+    description:
+      name: phonenumbers
+      sha256: "6a00ea6ca4636d8fba278a38e5fc6580be9e3cb38f4fafc4e6ef5009be0ffde2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
+  phonenumbers_core:
+    dependency: transitive
+    description:
+      name: phonenumbers_core
+      sha256: "9d4619947b8579b62f456bdb05d25be2e266c7601d1fbe02dc8e6bdc59dfb5d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      sha256: ea0b925899e64ecdfbf9c7becb60d5b50e706ade44a85b2363be2a22d88117d2
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.2"
   sky_engine:
     dependency: transitive
     description: flutter

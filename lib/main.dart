@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pragati',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+
         fontFamily: 'Metropolis',
         // textTheme: TextTheme(headlineLarge: ),
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
