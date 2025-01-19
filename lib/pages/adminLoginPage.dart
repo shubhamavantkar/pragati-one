@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:phonenumbers/phonenumbers.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/widgets/button.dart';
+import 'package:pragati/widgets/loginButtons.dart';
+import 'package:pragati/widgets/pragatiTextDivider.dart';
 
 class AdminLoginPage extends StatelessWidget {
   AdminLoginPage({super.key});
 
-  PhoneNumberEditingController _phoneNumberController =
+  final PhoneNumberEditingController _phoneNumberController =
       PhoneNumberEditingController();
 
   @override
@@ -29,7 +32,7 @@ class AdminLoginPage extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -78,9 +81,12 @@ class AdminLoginPage extends StatelessWidget {
                 height: 20,
               ),
               PhoneNumberField(
+                prefixBuilder: (context, country) {
+                  return buildPhoneNumberPrefix(context, country);
+                },
                 controller: _phoneNumberController,
-                countryCodeWidth: w * 0.15,
-                dialogTitle: 'Enter Your Phone Number',
+                countryCodeWidth: w * 0.25,
+                dialogTitle: 'Select Country Code',
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8))),
@@ -88,87 +94,46 @@ class AdminLoginPage extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              // PragatiButton(onPressed: () {}, text: 'Continue'),
-              SizedBox(
-                height: 15,
-              ),
-              PragatiTextDivider(
-                text: 'or',
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
                 children: [
-                  SizedBox(
-                    width: w * 0.4,
-                    height: w * 0.12,
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                            elevation: WidgetStatePropertyAll(0),
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.white),
-                            foregroundColor:
-                                WidgetStatePropertyAll(Colors.black),
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        side: BorderSide(color: Colors.grey)))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/google.png',
-                              height: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Google',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        )),
+                  Text('We have sent a verification code to'),
+                  Text(
+                      _phoneNumberController.value!.formattedNumber.toString()),
+                  OtpTextField(
+                    numberOfFields: 6,
+                    showFieldAsBox: true,
+                    fieldWidth: w * 0.12,
+                    borderColor: Colors.grey,
+                    borderRadius: BorderRadius.circular(8),
+                    onSubmit: (String verificationCode) {},
                   ),
                   SizedBox(
-                    width: w * 0.4,
-                    height: w * 0.12,
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                            elevation: WidgetStatePropertyAll(0),
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.white),
-                            foregroundColor:
-                                WidgetStatePropertyAll(Colors.black),
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        side: BorderSide(color: Colors.grey)))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/apple.png',
-                              height: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Apple',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        )),
+                    height: 20,
                   ),
+                  PragatiButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Continue',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Did\'nt get the OTP?',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      true
+                          ? GestureDetector(onTap: () {}, child: Text('Resend'))
+                          : Text('Resend OTP in 60s')
+                    ],
+                  )
                 ],
               )
             ],
@@ -179,28 +144,15 @@ class AdminLoginPage extends StatelessWidget {
   }
 }
 
-class PragatiTextDivider extends StatelessWidget {
-  String text;
-  PragatiTextDivider({super.key, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.w500),
+Widget? buildPhoneNumberPrefix(BuildContext context, Country? country) {
+  return country != null
+      ? Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.network(
+            'https://flagsapi.com/${country.code}/flat/64.png',
+            width: 5,
+            height: 5,
           ),
-        ),
-        Expanded(
-          child: Divider(),
-        ),
-      ],
-    );
-  }
+        )
+      : null;
 }
