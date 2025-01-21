@@ -30,8 +30,9 @@ class AdminLoginPage extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Padding(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,6 +141,7 @@ class AdminLoginPage extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
