@@ -21,7 +21,7 @@ class LoginButtons extends StatelessWidget {
         Column(
           children: [
             PragatiButton(
-              enabled: phoneNumber.nationalNumber.length == 10,
+              // enabled: phoneNumber.nationalNumber.length == 10,
               onPressed: onPressed,
               child: Text(
                 'Continue',
