@@ -24,9 +24,13 @@ class _LanguageCardState extends State<LanguageCard> {
             border: Border.all(color: Colors.grey.withValues(alpha: 0.3))),
         child: Row(
           children: [
-            Image.asset(
-              widget.imageLocation,
-              height: 20,
+            SizedBox(
+              height: 25,
+              width: 35,
+              child: Image.asset(
+                widget.imageLocation,
+                height: 20,
+              ),
             ),
             SizedBox(
               width: 25,

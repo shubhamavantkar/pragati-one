@@ -9,9 +9,7 @@ class LanguageModalSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
+      height: 570,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

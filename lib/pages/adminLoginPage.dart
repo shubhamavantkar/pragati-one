@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phonenumbers/phonenumbers.dart';
-import 'package:pragati/constants/consts.dart';
-import 'package:pragati/widgets/button.dart';
+
 import 'package:pragati/widgets/loadingDialog.dart';
 import 'package:pragati/widgets/loginButtons.dart';
 import 'package:pragati/widgets/otpButtons.dart';
+import 'package:pragati/widgets/pragatiCircleAvatarLogo.dart';
 import 'package:pragati/widgets/pragatiTextDivider.dart';
 
 class AdminLoginPage extends StatefulWidget {
@@ -67,24 +66,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  radius: w * 0.08,
-                  backgroundColor: Color(0xFF0265FF).withValues(alpha: 0.14),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Image.asset('assets/logo.png'),
-                  ),
-                ),
-                SizedBox(
-                  height: 2,
-                ),
-                Text(
-                  'Pragati',
-                  style: TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: w * 0.05),
-                ),
+                PragatiCircleAvatar(size: w),
                 SizedBox(
                   height: 20,
                 ),
@@ -112,13 +94,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   height: 20,
                 ),
                 PhoneNumberField(
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                   prefixBuilder: (context, country) {
                     return buildPhoneNumberPrefix(context, country);
                   },
                   controller: _phoneNumberController,
-                  countryCodeWidth: w * 0.25,
+                  countryCodeWidth: w * 0.26,
                   dialogTitle: 'Select Country Code',
                   decoration: InputDecoration(
+                      constraints: BoxConstraints(maxHeight: 50),
                       hintText: 'Enter your Phone Number',
                       hintStyle: TextStyle(fontSize: 14),
                       border: OutlineInputBorder(
@@ -140,8 +126,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                         onPressed: () async {
                           _handleLogin();
                         },
-                        phoneNumber:
-                            _phoneNumberController.value!.formattedNumber,
+                        phoneNumber: _phoneNumberController,
                       ),
               ],
             ),
@@ -158,8 +143,8 @@ Widget? buildPhoneNumberPrefix(BuildContext context, Country? country) {
           padding: const EdgeInsets.all(8.0),
           child: Image.network(
             'https://flagsapi.com/${country.code}/flat/64.png',
-            width: 5,
-            height: 5,
+            width: 2,
+            height: 2,
           ),
         )
       : null;

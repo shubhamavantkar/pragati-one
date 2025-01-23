@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:phonenumbers/phonenumbers.dart';
+import 'package:pragati/constants/consts.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/loadingDialog.dart';
 import 'package:pragati/widgets/pragatiTextDivider.dart';
 
 class LoginButtons extends StatelessWidget {
-  final String phoneNumber;
+  final PhoneNumberEditingController phoneNumber;
   final VoidCallback onPressed;
   const LoginButtons(
       {super.key, required this.onPressed, required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
+    print(phoneNumber.nationalNumber.length);
     double w = MediaQuery.sizeOf(context).width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -18,6 +21,7 @@ class LoginButtons extends StatelessWidget {
         Column(
           children: [
             PragatiButton(
+              enabled: phoneNumber.nationalNumber.length == 10,
               onPressed: onPressed,
               child: Text(
                 'Continue',
@@ -107,7 +111,10 @@ class LoginButtons extends StatelessWidget {
         ),
         Text(
           'By continuing, you agree to our\nTerms of Service Privacy Policy',
-          style: TextStyle(fontSize: w * 0.025, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: w * 0.025,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.withAlpha(700)),
         )
       ],
     );

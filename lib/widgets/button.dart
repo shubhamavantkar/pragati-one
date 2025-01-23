@@ -6,11 +6,13 @@ class PragatiButton extends StatelessWidget {
   final Widget child;
   final Color backgroundColor;
   final bool outlinedButton;
+  final bool enabled;
   const PragatiButton(
       {super.key,
       required this.onPressed,
       required this.child,
       this.backgroundColor = primaryColor,
+      this.enabled = true,
       this.outlinedButton = false});
 
   @override
@@ -20,12 +22,14 @@ class PragatiButton extends StatelessWidget {
       width: double.infinity,
       height: 45,
       child: ElevatedButton(
-          onPressed: onPressed,
+          onPressed: enabled ? onPressed : () {},
           style: ButtonStyle(
               elevation: WidgetStatePropertyAll(0),
               backgroundColor: outlinedButton
                   ? WidgetStatePropertyAll(Colors.white)
-                  : WidgetStatePropertyAll(primaryColor),
+                  : enabled
+                      ? WidgetStatePropertyAll(primaryColor)
+                      : WidgetStatePropertyAll(Colors.grey),
               foregroundColor: WidgetStatePropertyAll(Colors.white),
               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(

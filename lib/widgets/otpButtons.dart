@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/resendButton.dart';
 
@@ -64,7 +65,13 @@ class OTPButtons extends StatelessWidget {
               if (_verificationCode.length < 6) {
                 Fluttertoast.showToast(
                     msg: 'Invalid OTP', backgroundColor: Colors.redAccent);
+                return;
               }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RegisterFormPage(),
+                  ));
             },
             child: Text(
               'Continue',

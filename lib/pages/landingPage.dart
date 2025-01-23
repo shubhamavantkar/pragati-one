@@ -24,6 +24,7 @@ class LandingPage extends StatelessWidget {
                   barrierColor: Colors.transparent,
                   backgroundColor: Colors.transparent,
                   elevation: 10,
+                  isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40.0),
                   ),

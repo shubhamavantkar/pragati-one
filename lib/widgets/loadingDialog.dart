@@ -5,7 +5,7 @@ class PragatiDialogs {
   void showLoadingDialog(BuildContext context, String text) {
     showDialog(
       context: context,
-      barrierDismissible: true, // Prevent closing by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: EdgeInsets.all(24),
