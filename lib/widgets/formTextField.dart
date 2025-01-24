@@ -5,12 +5,16 @@ class FormTextField extends StatelessWidget {
   final String hintText;
   final Widget prefixImage;
   final bool necessary;
-  const FormTextField(
-      {super.key,
-      required this.hintText,
-      required this.label,
-      required this.prefixImage,
-      this.necessary = false});
+  final TextEditingController controller; // Added controller
+
+  const FormTextField({
+    super.key,
+    required this.hintText,
+    required this.label,
+    required this.prefixImage,
+    this.necessary = false,
+    required this.controller, // Added controller as a required parameter
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +41,7 @@ class FormTextField extends StatelessWidget {
           height: 5,
         ),
         TextFormField(
+          controller: controller, // Pass the controller here
           scrollPadding: EdgeInsets.all(16),
           decoration: InputDecoration(
             disabledBorder: OutlineInputBorder(borderSide: BorderSide()),

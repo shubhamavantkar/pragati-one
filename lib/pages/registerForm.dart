@@ -4,6 +4,8 @@ import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
 import 'package:pragati/widgets/pragatiCircleAvatarLogo.dart';
+import 'package:pragati/controllers/userController.dart'; // Import your UserController
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterFormPage extends StatefulWidget {
   RegisterFormPage({super.key});
@@ -14,6 +16,18 @@ class RegisterFormPage extends StatefulWidget {
 
 class _RegisterFormPageState extends State<RegisterFormPage> {
   bool _gstin = false;
+
+  // Add controllers for the form fields
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _turnoverController = TextEditingController();
+  final TextEditingController _employeesController = TextEditingController();
+  
+  // For dropdown
+  String _workingType = 'hehe'; // You can update this with proper options
+
+  final UserController _userController = UserController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,43 +67,59 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               SizedBox(
                 height: 20,
               ),
+              // Name field
               FormTextField(
+                controller: _nameController,
                 hintText: 'Enter Your Name',
                 label: 'Name',
                 prefixImage: Image.asset('assets/person.png'),
                 necessary: true,
               ),
+              // Company Name field
               FormTextField(
+                controller: _companyNameController,
                 hintText: 'Enter Company Name',
                 label: 'Company Name',
                 prefixImage: Image.asset('assets/company.png'),
                 necessary: true,
               ),
+              // Email field
               FormTextField(
+                controller: _emailController,
                 hintText: 'Enter Email',
                 label: 'Email',
                 prefixImage: Image.asset('assets/mail.png'),
                 necessary: true,
               ),
+              // Yearly Turnover field
               FormTextField(
+                controller: _turnoverController,
                 hintText: 'Enter Yearly Turnover',
                 label: 'Yearly Turnover',
                 prefixImage: Image.asset('assets/turnover.png'),
                 necessary: true,
               ),
+              // Employees Count field
               FormTextField(
+                controller: _employeesController,
                 hintText: 'Enter Employees count',
                 label: 'Employees count',
                 prefixImage: Image.asset('assets/employees.png'),
                 necessary: true,
               ),
+              // Working type dropdown
               FormDropdown(
                 label: 'Working type',
-                items: ['hehe', 'gege'],
+                items: ['civil', 'electrical','mechanical','others'],
                 necessary: true,
                 hintText: 'Select Working Type',
-                onChanged: (value) {},
+                onChanged: (value) {
+                  setState(() {
+                    _workingType = value!;
+                  });
+                },
               ),
+              // GSTIN switch
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -103,7 +133,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                       value: _gstin,
                       onChanged: (value) {
                         setState(() {
-                          _gstin = !_gstin;
+                          _gstin = value;
                         });
                       },
                     ),
@@ -113,6 +143,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               SizedBox(
                 height: 10,
               ),
+              // Skip and Continue buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -134,7 +165,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                   SizedBox(
                     width: w * 0.4,
                     child: PragatiButton(
-                      onPressed: () {},
+                      onPressed: _submitForm,
                       child: Text(
                         'Continue',
                         style: TextStyle(fontWeight: FontWeight.w600),
@@ -148,5 +179,33 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
         ),
       ),
     );
+  }
+
+  // Handle form submission
+  void _submitForm() async {
+    // Collect user data
+    Map<String, dynamic> userData = {
+      'name': _nameController.text,
+      'company_name': _companyNameController.text,
+      'email': _emailController.text,
+      'yearly_turnover': _turnoverController.text,
+      'employees_count': _employeesController.text,
+      'working_type': _workingType,
+      'gstin': _gstin,
+    };
+
+    // Call the UserController to update the user
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+      
+      if (token != null) {
+        await _userController.updateUser(userData);
+      } else {
+        print('No token found');
+      }
+    } catch (e) {
+      print('Error submitting form: $e');
+    }
   }
 }
