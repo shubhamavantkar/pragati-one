@@ -6,6 +6,7 @@ class FormTextField extends StatelessWidget {
   final Widget prefixImage;
   final bool necessary;
   final TextEditingController controller; // Added controller
+   final Function(String)? onChanged; // Add the onChanged parameter
 
   const FormTextField({
     super.key,
@@ -14,6 +15,7 @@ class FormTextField extends StatelessWidget {
     required this.prefixImage,
     this.necessary = false,
     required this.controller, // Added controller as a required parameter
+     this.onChanged, // Initialize onChanged
   });
 
   @override
@@ -43,6 +45,7 @@ class FormTextField extends StatelessWidget {
         TextFormField(
           controller: controller, // Pass the controller here
           scrollPadding: EdgeInsets.all(16),
+          onChanged: onChanged, // Pass onChanged to the TextField
           decoration: InputDecoration(
             disabledBorder: OutlineInputBorder(borderSide: BorderSide()),
             constraints: BoxConstraints(maxHeight: 50),

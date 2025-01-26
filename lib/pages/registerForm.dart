@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/pages/addProject.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
@@ -210,7 +211,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
     'workingType': _workingType,
     // Add otherWorkingType only if _workingType is "others"
     if (_workingType == 'others') 'otherWorkingType': _otherWorkingTypeController.text,
-    'GSTNumber': _gstin ? '27ABCDE1234F1Z5' : null, // Add a default or optional value
+    'GSTNumber': _gstin ? _gstNumberController.text : null, // Add a default or optional value
   };
 
   try {
@@ -220,6 +221,12 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
     if (token != null) {
       print(userData); // Debugging output to check the userData
       await _userController.updateUser(userData);
+
+      // Navigate to the AddProjectPage after a successful update
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddProjectPage()),
+      );
     } else {
       print('No token found');
     }
