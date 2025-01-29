@@ -1,18 +1,24 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pragati/constants/consts.dart';
-import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/resendButton.dart';
+import 'package:pragati/pages/registerForm.dart';
+// import 'package:pragati/pages/registerFormPage.dart'; // Add this line
 
 class OTPButtons extends StatelessWidget {
-  VoidCallback onEditPressed;
-  String phoneNumber;
-  OTPButtons(
-      {super.key, required this.phoneNumber, required this.onEditPressed});
+  final VoidCallback onEditPressed;
+  final String phoneNumber;
+  final Function(String) onOtpEntered;
+
+  OTPButtons({
+    super.key,
+    required this.phoneNumber,
+    required this.onEditPressed,
+    required this.onOtpEntered,
+  });
 
   String _verificationCode = '';
 
@@ -55,28 +61,26 @@ class OTPButtons extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onSubmit: (String verificationCode) {
             _verificationCode = verificationCode;
+            onOtpEntered(_verificationCode); // Call the callback when OTP is entered
           },
         ),
         SizedBox(
           height: 20,
         ),
         PragatiButton(
-            onPressed: () {
-              if (_verificationCode.length < 6) {
-                Fluttertoast.showToast(
-                    msg: 'Invalid OTP', backgroundColor: Colors.redAccent);
-                return;
-              }
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegisterFormPage(),
-                  ));
-            },
-            child: Text(
-              'Continue',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            )),
+          onPressed: () {
+            if (_verificationCode.length < 6) {
+              Fluttertoast.showToast(
+                  msg: 'Invalid OTP', backgroundColor: Colors.redAccent);
+              return;
+            }
+            onOtpEntered(_verificationCode); // Trigger the OTP verification
+          },
+          child: Text(
+            'Continue',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
         SizedBox(
           height: 20,
         ),

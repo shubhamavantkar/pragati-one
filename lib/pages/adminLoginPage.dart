@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phonenumbers/phonenumbers.dart';
 
+import 'package:pragati/controllers/authController.dart';
+import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/loadingDialog.dart';
 import 'package:pragati/widgets/loginButtons.dart';
 import 'package:pragati/widgets/otpButtons.dart';
@@ -20,23 +22,31 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   final PhoneNumberEditingController _phoneNumberController =
       PhoneNumberEditingController(PhoneNumber.isoCode('IN', ''));
+  final AuthController _authController = AuthController();
 
   void _handleLogin() async {
     if (_phoneNumberController.value!.formattedNumber.length < 10) {
       Fluttertoast.showToast(
-          msg: 'please enter a valid phone number',
+          msg: 'Please enter a valid phone number',
           backgroundColor: Colors.redAccent);
       return;
     }
+
+    // Show loading dialog
     PragatiDialogs().showLoadingDialog(context, "Sending OTP");
-    await Future.delayed(Duration(seconds: 5));
+
+    final isOtpSent = await _authController.sendOtp(
+        _phoneNumberController.value!.formattedNumber, 'admin');
+
+    if (isOtpSent) {
+      setState(() {
+        _otpSent = true; // Enable OTP view
+      });
+    }
 
     if (context.mounted) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // Close loading dialog
     }
-    setState(() {
-      _otpSent = true;
-    });
   }
 
   @override
@@ -67,36 +77,23 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 PragatiCircleAvatar(size: w),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Text(
                   'Your Partner in Construction.',
                   style: TextStyle(
                       fontWeight: FontWeight.w600, fontSize: w * 0.05),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Text(
                   'Focus on Building. Leave the Management to Us.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.w500, fontSize: w * 0.035),
                 ),
-                SizedBox(
-                  height: 40,
-                ),
-                PragatiTextDivider(
-                  text: 'Login or Sign up as admin',
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 40),
+                PragatiTextDivider(text: 'Login or Sign up as admin'),
+                SizedBox(height: 20),
                 PhoneNumberField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
                   prefixBuilder: (context, country) {
                     return buildPhoneNumberPrefix(context, country);
                   },
@@ -110,9 +107,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8))),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 _otpSent
                     ? OTPButtons(
                         onEditPressed: () {
@@ -121,7 +116,53 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                           });
                         },
                         phoneNumber:
-                            _phoneNumberController.value!.formattedNumber)
+                            _phoneNumberController.value!.formattedNumber,
+                        onOtpEntered: (String otp) async {
+                          try {
+                            // Show loading dialog
+                            PragatiDialogs()
+                                .showLoadingDialog(context, "Verifying OTP");
+
+                            final isOtpVerified =
+                                await _authController.verifyOtp(
+                                    _phoneNumberController
+                                        .value!.formattedNumber,
+                                    otp);
+
+                            if (context.mounted) {
+                              Navigator.of(context)
+                                  .pop(); // Close loading dialog
+                            }
+
+                            print(isOtpVerified);
+
+                            if (isOtpVerified) {
+                              if (context.mounted) {
+                                // On successful OTP verification, navigate to RegisterFormPage
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterFormPage()),
+                                );
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "OTP verification failed. Please try again.",
+                                backgroundColor: Colors.redAccent,
+                              );
+                            }
+                          } catch (error) {
+                            if (context.mounted) {
+                              Navigator.of(context)
+                                  .pop(); // Close loading dialog
+                            }
+                            Fluttertoast.showToast(
+                              msg: "An error occurred: $error",
+                              backgroundColor: Colors.redAccent,
+                            );
+                          }
+                        },
+                      )
                     : LoginButtons(
                         onPressed: () async {
                           _handleLogin();
@@ -135,17 +176,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       ),
     );
   }
-}
 
-Widget? buildPhoneNumberPrefix(BuildContext context, Country? country) {
-  return country != null
-      ? Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.network(
-            'https://flagsapi.com/${country.code}/flat/64.png',
-            width: 2,
-            height: 2,
-          ),
-        )
-      : null;
+  Widget? buildPhoneNumberPrefix(BuildContext context, Country? country) {
+    return country != null
+        ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.network(
+              'https://flagsapi.com/${country.code}/flat/64.png',
+              width: 24,
+              height: 24,
+            ),
+          )
+        : null;
+  }
 }
