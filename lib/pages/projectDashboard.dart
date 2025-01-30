@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/widgets/cashFlowIndicator.dart';
+import 'package:pragati/widgets/projectCard.dart';
 import 'package:pragati/widgets/searchField.dart';
 
-class ProjectDashboard extends StatelessWidget {
+class ProjectDashboard extends StatefulWidget {
   const ProjectDashboard({super.key});
+
+  @override
+  _ProjectDashboardState createState() => _ProjectDashboardState();
+}
+
+class _ProjectDashboardState extends State<ProjectDashboard>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +106,64 @@ class ProjectDashboard extends StatelessWidget {
           Container(
             color: Colors.white,
             width: w,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(8),
               child: Column(
                 children: [
                   SearchField(),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  // TabBar
+                  TabBar(
+                    controller: _tabController,
+                    indicatorColor: Colors.blue,
+                    labelColor: Colors.blue,
+                    unselectedLabelColor: Colors.grey,
+                    tabs: const [
+                      Tab(text: "Ongoing"),
+                      Tab(text: "Completed"),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 300, // Adjust height as needed
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        // Ongoing Projects
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ProjectCard(
+                                project: Project.new(
+                                    projectName: 'Project Pragati',
+                                    projectLocation: 'Bald Street, Haripur',
+                                    projectOwner: 'Jin Sakai'),
+                              ),
+                              ProjectCard(
+                                project: Project.new(
+                                    projectName: 'Project Zen',
+                                    projectLocation: 'Maple Street, Kyoto',
+                                    projectOwner: 'Samurai Jack'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Completed Projects
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ProjectCard(
+                                project: Project.new(
+                                    projectName: 'Project Alpha',
+                                    projectLocation: 'Sunset Blvd, Tokyo',
+                                    projectOwner: 'Hideo Kojima'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

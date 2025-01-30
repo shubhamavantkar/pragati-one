@@ -49,6 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   builder: (context) => AddProjectPage(),
                 ));
           },
+          shape: CircleBorder(),
           backgroundColor: primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
         ),
@@ -61,13 +62,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
           ),
-          boxShadow: [
-            BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 1),
-          ],
         ),
         child: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 10,
           child: BottomNavigationBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
