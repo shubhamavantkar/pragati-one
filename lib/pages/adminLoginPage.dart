@@ -120,6 +120,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                         onOtpEntered: (String otp) async {
                           try {
                             // Show loading dialog
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RegisterFormPage(),
+                                ));
                             PragatiDialogs()
                                 .showLoadingDialog(context, "Verifying OTP");
 

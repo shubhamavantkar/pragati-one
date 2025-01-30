@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/addProject.dart';
+import 'package:pragati/pages/dashboardScreen.dart';
+import 'package:pragati/pages/projectDashboard.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
@@ -24,9 +26,10 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _turnoverController = TextEditingController();
   final TextEditingController _employeesController = TextEditingController();
-  final TextEditingController _gstNumberController = TextEditingController(); // New Controller
-  final TextEditingController _otherWorkingTypeController = TextEditingController();
-
+  final TextEditingController _gstNumberController =
+      TextEditingController(); // New Controller
+  final TextEditingController _otherWorkingTypeController =
+      TextEditingController();
 
   // For dropdown
   String _workingType = 'civil';
@@ -107,27 +110,26 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 prefixImage: Image.asset('assets/employees.png'),
                 necessary: true,
               ),
-               // Working type dropdown
-            FormDropdown(
-              label: 'Working type',
-              items: ['civil', 'electrical', 'mechanical', 'others'],
-              necessary: true,
-              hintText: 'Select Working Type',
-              onChanged: (value) {
-                setState(() {
-                  _workingType = value!;
-                });
-              },
-            ),
-            // Additional field for 'others'
-            if (_workingType == 'others')
-              FormTextField(
-                controller: _otherWorkingTypeController,
-                hintText: 'Specify Your Working Type',
-                label: 'Other Working Type',
-                prefixImage: Image.asset('assets/other.png'), // Add the required argument
+              // Working type dropdown
+              FormDropdown(
+                label: 'Working type',
+                items: ['civil', 'electrical', 'mechanical', 'others'],
                 necessary: true,
+                hintText: 'Select Working Type',
+                onChanged: (value) {
+                  setState(() {
+                    _workingType = value!;
+                  });
+                },
               ),
+              // Additional field for 'others'
+              if (_workingType == 'others')
+                FormTextField(
+                  controller: _otherWorkingTypeController,
+                  hintText: 'Specify Your Working Type',
+                  label: 'Other Working Type',
+                  necessary: true,
+                ),
               // GSTIN switch
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,7 +161,13 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                   SizedBox(
                     width: w * 0.4,
                     child: PragatiButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DashboardScreen(),
+                            ));
+                      },
                       outlinedButton: true,
                       child: Text(
                         'Skip',
@@ -194,7 +202,6 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
         controller: _gstNumberController,
         hintText: 'Enter GST Number',
         label: 'GST Number',
-        prefixImage: Image.asset('assets/gst.png'),
         necessary: true,
       );
     }
@@ -202,36 +209,39 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   }
 
   void _submitForm() async {
-  Map<String, dynamic> userData = {
-    'name': _nameController.text,
-    'email': _emailController.text,
-    'companyName': _companyNameController.text,
-    'yearlyTurnover': int.tryParse(_turnoverController.text) ?? 0,
-    'employeesCount': int.tryParse(_employeesController.text) ?? 0,
-    'workingType': _workingType,
-    // Add otherWorkingType only if _workingType is "others"
-    if (_workingType == 'others') 'otherWorkingType': _otherWorkingTypeController.text,
-    'GSTNumber': _gstin ? _gstNumberController.text : null, // Add a default or optional value
-  };
+    Map<String, dynamic> userData = {
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'companyName': _companyNameController.text,
+      'yearlyTurnover': int.tryParse(_turnoverController.text) ?? 0,
+      'employeesCount': int.tryParse(_employeesController.text) ?? 0,
+      'workingType': _workingType,
+      // Add otherWorkingType only if _workingType is "others"
+      if (_workingType == 'others')
+        'otherWorkingType': _otherWorkingTypeController.text,
+      'GSTNumber': _gstin
+          ? _gstNumberController.text
+          : null, // Add a default or optional value
+    };
 
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
 
-    if (token != null) {
-      print(userData); // Debugging output to check the userData
-      await _userController.updateUser(userData);
+      if (token != null) {
+        print(userData); // Debugging output to check the userData
+        await _userController.updateUser(userData);
 
-      // Navigate to the AddProjectPage after a successful update
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AddProjectPage()),
-      );
-    } else {
-      print('No token found');
+        // Navigate to the AddProjectPage after a successful update
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddProjectPage()),
+        );
+      } else {
+        print('No token found');
+      }
+    } catch (e) {
+      print('Error submitting form: $e');
     }
-  } catch (e) {
-    print('Error submitting form: $e');
   }
-}
 }

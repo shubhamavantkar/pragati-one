@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 class FormTextField extends StatelessWidget {
   final String label;
   final String hintText;
-  final Widget prefixImage;
+  final Widget? prefixImage;
   final bool necessary;
   final TextEditingController controller; // Added controller
-   final Function(String)? onChanged; // Add the onChanged parameter
+  final Function(String)? onChanged; // Add the onChanged parameter
 
   const FormTextField({
     super.key,
     required this.hintText,
     required this.label,
-    required this.prefixImage,
+    this.prefixImage,
     this.necessary = false,
     required this.controller, // Added controller as a required parameter
-     this.onChanged, // Initialize onChanged
+    this.onChanged, // Initialize onChanged
   });
 
   @override
@@ -47,23 +47,40 @@ class FormTextField extends StatelessWidget {
           scrollPadding: EdgeInsets.all(16),
           onChanged: onChanged, // Pass onChanged to the TextField
           decoration: InputDecoration(
-            disabledBorder: OutlineInputBorder(borderSide: BorderSide()),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Colors.grey.withOpacity(0.2)), // Lighter border
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Colors.grey.withOpacity(0.2)), // Lighter border
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color:
+                      Colors.grey.withOpacity(0.4)), // Slightly darker on focus
+            ),
             constraints: BoxConstraints(maxHeight: 50),
             contentPadding: EdgeInsets.all(16),
             prefixIconConstraints: BoxConstraints(maxHeight: 20),
-            prefixIcon: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: prefixImage),
+            prefixIcon: prefixImage != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: prefixImage,
+                  )
+                : SizedBox(width: 5),
             hintText: hintText,
             hintStyle: TextStyle(
-                fontSize: w * 0.035,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.withValues(alpha: 0.5)),
+              fontSize: w * 0.035,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.withOpacity(0.5),
+            ),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: Colors.grey.withValues(alpha: 0.5),
-                )),
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: Colors.grey.withOpacity(0.2), // Lighter border
+              ),
+            ),
           ),
         ),
         SizedBox(
