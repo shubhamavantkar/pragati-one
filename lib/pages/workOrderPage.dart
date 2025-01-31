@@ -49,6 +49,9 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
     });
   }
 
+  int totalAmount = 0;
+  int expectedProfit = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +78,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               prefixImage: SizedBox(), // Passing an empty widget
             ),
             FormTextField(
+              keyboardType: TextInputType.numberWithOptions(),
               controller: _unitController,
               hintText: 'Enter Unit of Measurement',
               label: 'Unit of Measurement',
@@ -82,6 +86,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               prefixImage: SizedBox(), // Passing an empty widget
             ),
             FormTextField(
+              keyboardType: TextInputType.numberWithOptions(),
               controller: _quantityController,
               hintText: 'Enter Quantity',
               label: 'Quantity',
@@ -90,6 +95,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
                   _calculateAmount(), // Recalculate amount on change
             ),
             FormTextField(
+              keyboardType: TextInputType.numberWithOptions(),
               controller: _rateController,
               hintText: 'Enter Rate',
               label: 'Rate',
@@ -97,35 +103,74 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               onChanged: (value) =>
                   _calculateAmount(), // Recalculate amount on change
             ),
+            // FormTextField(
+            //   keyboardType: TextInputType.numberWithOptions(),
+            //   controller: _rateController,
+            //   hintText: 'Enter Amount',
+            //   label: 'Amount',
+            //   prefixImage: SizedBox(), // Passing an empty widget
+            //   onChanged: (value) =>
+            //       _calculateAmount(), // Recalculate amount on change
+            // ),
             FormTextField(
+              keyboardType: TextInputType.numberWithOptions(),
               controller: _rateController,
-              hintText: 'Enter Amount',
-              label: 'Amount',
+              hintText: 'Enter Expected Margin',
+              label: 'Expected Margin',
               prefixImage: SizedBox(), // Passing an empty widget
               onChanged: (value) =>
                   _calculateAmount(), // Recalculate amount on change
             ),
-            Text(
-              'Expected Margin',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-            ),
-            Container(
-              height: 45,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Colors.grey.withValues(alpha: 0.5))),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  'Rs. $_amount',
-                  style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12),
+            // Text(
+            //   'Expected Margin',
+            //   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            // ),
+            // SizedBox(
+            //   height: 5,
+            // ),
+            // Container(
+            //   height: 45,
+            //   width: double.infinity,
+            //   decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(8),
+            //       border:
+            //           Border.all(color: Colors.grey.withValues(alpha: 0.5))),
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(12.0),
+            //     child: Text(
+            //       'Rs. $_amount',
+            //       style: TextStyle(
+            //           color: Colors.green,
+            //           fontWeight: FontWeight.w500,
+            //           fontSize: 12),
+            //     ),
+            //   ),
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total Amount:',
+                  style: TextStyle(fontSize: 10),
                 ),
-              ),
+                Text(
+                  'Rs. $totalAmount',
+                  style: TextStyle(fontSize: 10),
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Expected Profit:',
+                  style: TextStyle(fontSize: 10),
+                ),
+                Text(
+                  'Rs. $expectedProfit',
+                  style: TextStyle(fontSize: 10),
+                )
+              ],
             ),
             if (!_isValid)
               Text(

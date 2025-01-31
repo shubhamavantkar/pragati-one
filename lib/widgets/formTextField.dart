@@ -7,9 +7,11 @@ class FormTextField extends StatelessWidget {
   final bool necessary;
   final TextEditingController controller; // Added controller
   final Function(String)? onChanged; // Add the onChanged parameter
+  TextInputType keyboardType;
 
-  const FormTextField({
+  FormTextField({
     super.key,
+    this.keyboardType = TextInputType.text,
     required this.hintText,
     required this.label,
     this.prefixImage,
@@ -43,6 +45,7 @@ class FormTextField extends StatelessWidget {
           height: 5,
         ),
         TextFormField(
+          keyboardType: keyboardType,
           controller: controller, // Pass the controller here
           scrollPadding: EdgeInsets.all(16),
           onChanged: onChanged, // Pass onChanged to the TextField
