@@ -101,7 +101,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   countryCodeWidth: w * 0.26,
                   dialogTitle: 'Select Country Code',
                   decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 50),
+                      constraints: BoxConstraints(maxHeight: 60),
                       hintText: 'Enter your Phone Number',
                       hintStyle: TextStyle(fontSize: 14),
                       border: OutlineInputBorder(

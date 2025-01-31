@@ -20,7 +20,7 @@ class PragatiButton extends StatelessWidget {
     double w = MediaQuery.sizeOf(context).width;
     return SizedBox(
       width: double.infinity,
-      height: 45,
+      height: 55,
       child: ElevatedButton(
           onPressed: enabled ? onPressed : () {},
           style: ButtonStyle(
