@@ -3,8 +3,9 @@ import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/workOrderPage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formTextField.dart';
-import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/pragatiDottedButton.dart';
+import 'package:pragati/controllers/projectController.dart'; // Import the controller
+import 'package:pragati/controllers/tokeController.dart';
 
 class AddProjectPage extends StatefulWidget {
   const AddProjectPage({super.key});
@@ -18,12 +19,54 @@ class _AddProjectPageState extends State<AddProjectPage> {
   final TextEditingController _clientNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _retentionController = TextEditingController();
-  final TextEditingController _startDateController =
-      TextEditingController(); // Start Date Controller
-  final TextEditingController _endDateController =
-      TextEditingController(); // End Date Controller
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
 
   List<Map<String, dynamic>> workOrders = [];
+
+  // Reference to your project controller
+  final ProjectController projectController = ProjectController();
+
+  void _createProject() async {
+    final projectData = {
+      'projectName': _projectNameController.text,
+      'clientName': _clientNameController.text,
+      'location': _locationController.text,
+      'retention': _retentionController.text,
+      'startDate': _startDateController.text,
+      'endDate': _endDateController.text,
+      'workOrders': workOrders, // Add the work orders here
+    };
+
+    try {
+      // Retrieve token
+      String? token = await getToken();
+      print(token); // Check if the token is null
+      if (token == null || token.isEmpty) {
+        // Handle case where token is not found (e.g., show an error or redirect to login)
+        print("Token not found. Please log in again.");
+        return;
+      }
+
+      final response =
+          await projectController.createProject(projectData, token);
+      print(response);
+      if (response['success']) {
+        // Handle success (e.g., navigate to the project list or show success message)
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Project Created Successfully')));
+        Navigator.pop(context);
+      } else {
+        // Handle error (e.g., show an error message)
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to create project')));
+      }
+    } catch (error) {
+      // Handle API error
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $error')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +89,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Container(
               color: Colors.white,
               child: Padding(
@@ -64,7 +105,6 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         'assets/projectName.png',
                         height: 15,
                       ),
-                      // prefixImage: SizedBox(), // Passing an empty widget
                     ),
                     FormTextField(
                       controller: _clientNameController,
@@ -74,7 +114,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       prefixImage: Image.asset(
                         'assets/clientName.png',
                         height: 15,
-                      ), // Passing an empty widget
+                      ),
                     ),
                     FormTextField(
                       controller: _locationController,
@@ -84,11 +124,10 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       prefixImage: Image.asset(
                         'assets/location.png',
                         height: 15,
-                      ), // Passing an empty widget
+                      ),
                     ),
                     Row(
                       children: [
-                        // Start Date
                         Expanded(
                           child: GestureDetector(
                             onTap: () async {
@@ -118,7 +157,6 @@ class _AddProjectPageState extends State<AddProjectPage> {
                           ),
                         ),
                         SizedBox(width: 10),
-                        // End Date
                         Expanded(
                           child: GestureDetector(
                             onTap: () async {
@@ -155,9 +193,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       child: Text('Project Photos',
                           style: TextStyle(fontWeight: FontWeight.w600)),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    SizedBox(height: 5),
                     PragatiDottedButton(
                       label: 'Upload',
                       onTap: () {},
@@ -228,7 +264,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       prefixImage: Image.asset(
                         'assets/retention.png',
                         height: 15,
-                      ), // Passing an empty widget
+                      ),
                     ),
                   ],
                 ),
@@ -242,8 +278,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
           ? Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              child:
-                  PragatiButton(onPressed: () {}, child: Text('Add Project')),
+              child: PragatiButton(
+                  onPressed: _createProject, child: Text('Add Project')),
             )
           : SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
