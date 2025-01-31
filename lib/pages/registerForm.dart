@@ -105,15 +105,15 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               // Employees Count field
               FormTextField(
                 controller: _employeesController,
-                hintText: 'Enter Employees count',
-                label: 'Employees count',
+                hintText: 'Enter Employees Count',
+                label: 'Employees Count',
                 prefixImage: Image.asset('assets/employees.png'),
                 necessary: true,
               ),
               // Working type dropdown
               FormDropdown(
-                label: 'Working type',
-                items: ['civil', 'electrical', 'mechanical', 'others'],
+                label: 'Working Type',
+                items: ['Civil', 'Electrical', 'Mechanical', 'Others'],
                 necessary: true,
                 hintText: 'Select Working Type',
                 onChanged: (value) {
@@ -123,7 +123,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 },
               ),
               // Additional field for 'others'
-              if (_workingType == 'others')
+              if (_workingType == 'Others')
                 FormTextField(
                   controller: _otherWorkingTypeController,
                   hintText: 'Specify Your Working Type',

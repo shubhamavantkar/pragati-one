@@ -78,12 +78,12 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       CashFlowIndicator(
-                          label: 'RECEIVABLE',
+                          label: 'Receivable',
                           amount: 1229000,
                           showCaption: true,
                           outflow: false),
                       CashFlowIndicator(
-                          label: 'PAYABLE',
+                          label: 'Payable',
                           amount: 1229000,
                           showCaption: true,
                           outflow: true),

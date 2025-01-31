@@ -25,7 +25,7 @@ class FormDropdown extends StatelessWidget {
         Row(
           children: [
             Text(
-              label.toUpperCase(),
+              label,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: w * 0.03),
             ),
             necessary
