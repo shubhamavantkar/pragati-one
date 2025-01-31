@@ -63,112 +63,119 @@ class _ProjectDashboardState extends State<ProjectDashboard>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 15),
-          Container(
-            width: w,
-            height: 170,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      CashFlowIndicator(
-                          label: 'Receivable',
-                          amount: 1229000,
-                          showCaption: true,
-                          outflow: false),
-                      CashFlowIndicator(
-                          label: 'Payable',
-                          amount: 1229000,
-                          showCaption: true,
-                          outflow: true),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      CashFlowIndicator(amount: 24357, label: 'Cash Inflow'),
-                      CashFlowIndicator(
-                          amount: 76543, label: 'Cash Outflow', outflow: true),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          Container(
-            color: Colors.white,
-            width: w,
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  SearchField(),
-                  const SizedBox(height: 10),
-                  // TabBar
-                  TabBar(
-                    controller: _tabController,
-                    indicatorColor: Colors.blue,
-                    labelColor: Colors.blue,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: const [
-                      Tab(text: "Ongoing"),
-                      Tab(text: "Completed"),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 300, // Adjust height as needed
-                    child: TabBarView(
-                      controller: _tabController,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 15),
+            Container(
+              width: w,
+              height: 186,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Ongoing Projects
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ProjectCard(
-                                project: Project.new(
-                                    projectName: 'Project Pragati',
-                                    projectLocation: 'Bald Street, Haripur',
-                                    projectOwner: 'Jin Sakai'),
-                              ),
-                              ProjectCard(
-                                project: Project.new(
-                                    projectName: 'Project Zen',
-                                    projectLocation: 'Maple Street, Kyoto',
-                                    projectOwner: 'Samurai Jack'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Completed Projects
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ProjectCard(
-                                project: Project.new(
-                                    projectName: 'Project Alpha',
-                                    projectLocation: 'Sunset Blvd, Tokyo',
-                                    projectOwner: 'Hideo Kojima'),
-                              ),
-                            ],
-                          ),
-                        ),
+                        CashFlowIndicator(
+                            label: 'Receivable',
+                            amount: 1229000,
+                            showCaption: true,
+                            outflow: false),
+                        CashFlowIndicator(
+                            label: 'Payable',
+                            amount: 1229000,
+                            showCaption: true,
+                            outflow: true),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CashFlowIndicator(amount: 24357, label: 'Cash Inflow'),
+                        CashFlowIndicator(
+                            amount: 76543,
+                            label: 'Cash Outflow',
+                            outflow: true),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
-          )
-        ],
+            const SizedBox(height: 15),
+            Container(
+              color: Colors.white,
+              width: w,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Column(
+                  children: [
+                    SearchField(),
+                    const SizedBox(height: 10),
+                    // TabBar
+                    TabBar(
+                      controller: _tabController,
+                      indicatorColor: primaryColor,
+                      labelColor: primaryColor,
+                      unselectedLabelColor: Colors.grey,
+                      tabs: const [
+                        Tab(text: "Ongoing"),
+                        Tab(text: "Completed"),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 314, // Adjust height as needed
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          // Ongoing Projects
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                ProjectCard(
+                                  project: Project.new(
+                                      projectName: 'Project Pragati',
+                                      projectLocation: 'Bald Street, Haripur',
+                                      projectOwner: 'Jin Sakai'),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                ProjectCard(
+                                  project: Project.new(
+                                      projectName: 'Project Zen',
+                                      projectLocation: 'Maple Street, Kyoto',
+                                      projectOwner: 'Samurai Jack'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Completed Projects
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                ProjectCard(
+                                  project: Project.new(
+                                      projectName: 'Project Alpha',
+                                      projectLocation: 'Sunset Blvd, Tokyo',
+                                      projectOwner: 'Hideo Kojima'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

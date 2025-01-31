@@ -53,6 +53,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           'Work Order',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
