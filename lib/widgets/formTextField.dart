@@ -74,7 +74,7 @@ class FormTextField extends StatelessWidget {
                 : SizedBox(width: 5),
             hintText: hintText,
             hintStyle: TextStyle(
-              fontSize: w * 0.035,
+              fontSize: w * 0.03,
               fontWeight: FontWeight.w500,
               color: Colors.grey.withOpacity(0.5),
             ),

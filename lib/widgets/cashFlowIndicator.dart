@@ -23,14 +23,15 @@ class CashFlowIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;
-
+    double h = MediaQuery.sizeOf(context).height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         label != null
             ? Text(
                 label!,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                style:
+                    TextStyle(fontSize: w * 0.03, fontWeight: FontWeight.w600),
               )
             : SizedBox(),
         SizedBox(
@@ -67,7 +68,7 @@ class CashFlowIndicator extends StatelessWidget {
                               Text(
                                 outflow ? 'To Pay' : 'To Collect',
                                 style: TextStyle(
-                                    fontSize: 8,
+                                    fontSize: w * 0.02,
                                     color: outflow
                                         ? Color(0xFFFF5757)
                                         : Color(0xFF2E9243),
@@ -79,11 +80,11 @@ class CashFlowIndicator extends StatelessWidget {
                               outflow
                                   ? Image.asset(
                                       'assets/up.png',
-                                      height: 6,
+                                      height: h * 0.007,
                                     )
                                   : Image.asset(
                                       'assets/down.png',
-                                      height: 6,
+                                      height: h * 0.007,
                                     ),
                             ],
                           )

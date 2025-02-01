@@ -8,6 +8,8 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.sizeOf(context).width;
+
     return Container(
       height: 260,
       decoration: BoxDecoration(
@@ -32,7 +34,7 @@ class ProjectCard extends StatelessWidget {
                       children: [
                         Image.asset(
                           'assets/projectNameBold.png',
-                          height: 12,
+                          height: w * 0.03,
                         ),
                         SizedBox(
                           width: 5,
@@ -40,7 +42,7 @@ class ProjectCard extends StatelessWidget {
                         Text(
                           project.projectName,
                           style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w500),
+                              fontSize: w * 0.03, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -48,7 +50,7 @@ class ProjectCard extends StatelessWidget {
                       children: [
                         Image.asset(
                           'assets/projectOwner.png',
-                          height: 12,
+                          height: w * 0.03,
                         ),
                         SizedBox(
                           width: 5,
@@ -56,7 +58,7 @@ class ProjectCard extends StatelessWidget {
                         Text(
                           project.projectOwner,
                           style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w500),
+                              fontSize: w * 0.03, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -64,7 +66,7 @@ class ProjectCard extends StatelessWidget {
                       children: [
                         Image.asset(
                           'assets/projectLocation.png',
-                          height: 12,
+                          height: w * 0.03,
                         ),
                         SizedBox(
                           width: 5,
@@ -72,7 +74,7 @@ class ProjectCard extends StatelessWidget {
                         Text(
                           project.projectLocation,
                           style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w500),
+                              fontSize: w * 0.03, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),

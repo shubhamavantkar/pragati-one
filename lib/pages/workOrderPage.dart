@@ -15,14 +15,29 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
   final TextEditingController _unitController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
+  TextEditingController _expectedMarginController = TextEditingController();
   double _amount = 0.0; // Default value
+  double _expectedProfit = 0.0;
   bool _isValid = true; // Validation flag
 
   void _calculateAmount() {
     double quantity = double.tryParse(_quantityController.text) ?? 0.0;
     double rate = double.tryParse(_rateController.text) ?? 0.0;
+
     setState(() {
       _amount = quantity * rate;
+    });
+  }
+
+  void _calculateMargin() {
+    int margin = int.tryParse(_expectedMarginController.text) ?? 0;
+
+    if (margin > 100) {
+      _expectedMarginController.text = '100';
+      margin = 100;
+    }
+    setState(() {
+      _expectedProfit = _amount * (margin / 100);
     });
   }
 
@@ -32,6 +47,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
         _unitController.text.isEmpty ||
         _quantityController.text.isEmpty ||
         _rateController.text.isEmpty ||
+        _expectedMarginController.text.isEmpty ||
         _amount <= 0) {
       setState(() {
         _isValid = false;
@@ -46,14 +62,14 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
       'quantity': _quantityController.text,
       'rate': _rateController.text,
       'amount': _amount,
+      'margin': _expectedMarginController.text,
+      'profit': _expectedProfit
     });
   }
 
-  int totalAmount = 0;
-  int expectedProfit = 0;
-
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -75,22 +91,26 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               controller: _packageNameController,
               hintText: 'Enter Package Name',
               label: 'Name of Work Package',
-              prefixImage: SizedBox(), // Passing an empty widget
-            ),
-            FormTextField(
-              keyboardType: TextInputType.numberWithOptions(),
-              controller: _unitController,
-              hintText: 'Enter Unit of Measurement',
-              label: 'Unit of Measurement',
               necessary: true,
               prefixImage: SizedBox(), // Passing an empty widget
             ),
+            // FormTextField(
+            //   keyboardType: TextInputType.numberWithOptions(),
+            //   controller: _unitController,
+            //   hintText: 'Enter Unit of Measurement',
+            //   label: 'Unit of Measurement',
+            //   necessary: true,
+            //   prefixImage: SizedBox(), // Passing an empty widget
+            // ),
+
+            UnitSearchField(),
             FormTextField(
               keyboardType: TextInputType.numberWithOptions(),
               controller: _quantityController,
               hintText: 'Enter Quantity',
               label: 'Quantity',
               prefixImage: SizedBox(), // Passing an empty widget
+              necessary: true,
               onChanged: (value) =>
                   _calculateAmount(), // Recalculate amount on change
             ),
@@ -99,53 +119,21 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               controller: _rateController,
               hintText: 'Enter Rate',
               label: 'Rate',
+              necessary: true,
               prefixImage: SizedBox(), // Passing an empty widget
               onChanged: (value) =>
                   _calculateAmount(), // Recalculate amount on change
             ),
-            // FormTextField(
-            //   keyboardType: TextInputType.numberWithOptions(),
-            //   controller: _rateController,
-            //   hintText: 'Enter Amount',
-            //   label: 'Amount',
-            //   prefixImage: SizedBox(), // Passing an empty widget
-            //   onChanged: (value) =>
-            //       _calculateAmount(), // Recalculate amount on change
-            // ),
             FormTextField(
               keyboardType: TextInputType.numberWithOptions(),
-              controller: _rateController,
+              controller: _expectedMarginController,
               hintText: 'Enter Expected Margin',
               label: 'Expected Margin',
+              necessary: true,
               prefixImage: SizedBox(), // Passing an empty widget
               onChanged: (value) =>
-                  _calculateAmount(), // Recalculate amount on change
+                  _calculateMargin(), // Recalculate amount on change
             ),
-            // Text(
-            //   'Expected Margin',
-            //   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-            // ),
-            // SizedBox(
-            //   height: 5,
-            // ),
-            // Container(
-            //   height: 45,
-            //   width: double.infinity,
-            //   decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(8),
-            //       border:
-            //           Border.all(color: Colors.grey.withValues(alpha: 0.5))),
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(12.0),
-            //     child: Text(
-            //       'Rs. $_amount',
-            //       style: TextStyle(
-            //           color: Colors.green,
-            //           fontWeight: FontWeight.w500,
-            //           fontSize: 12),
-            //     ),
-            //   ),
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -154,7 +142,7 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
                   style: TextStyle(fontSize: 10),
                 ),
                 Text(
-                  'Rs. $totalAmount',
+                  'Rs. $_amount',
                   style: TextStyle(fontSize: 10),
                 )
               ],
@@ -167,29 +155,26 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
                   style: TextStyle(fontSize: 10),
                 ),
                 Text(
-                  'Rs. $expectedProfit',
+                  'Rs. $_expectedProfit',
                   style: TextStyle(fontSize: 10),
                 )
               ],
             ),
+            SizedBox(
+              height: 20,
+            ),
             if (!_isValid)
               Text(
                 'Please fill all required fields correctly!',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: Colors.red, fontSize: 12),
               ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             SizedBox(
               height: 45,
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context, {
-                    'name': _packageNameController.text,
-                    'unit': _unitController.text,
-                    'quantity': _quantityController.text,
-                    'rate': _rateController.text,
-                    'amount': _amount,
-                  });
+                  _saveWorkPackage();
                 },
                 style: ButtonStyle(
                     elevation: WidgetStatePropertyAll(0),
@@ -208,6 +193,117 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class UnitSearchField extends StatefulWidget {
+  @override
+  _UnitSearchFieldState createState() => _UnitSearchFieldState();
+}
+
+class _UnitSearchFieldState extends State<UnitSearchField> {
+  final TextEditingController _unitController = TextEditingController();
+  final List<String> units = [
+    // Weight
+    "Kilogram (kg)", "Gram (g)", "Ton (t)",
+    // Length
+    "Meter (m)", "Centimeter (cm)", "Millimeter (mm)", "Kilometer (km)",
+    "Inch (in)", "Foot (ft)", "Yard (yd)", "Mile (mi)",
+    // Area
+    "Square Meter (m²)", "Square Centimeter (cm²)", "Square Millimeter (mm²)",
+    "Square Kilometer (km²)", "Acre (ac)", "Hectare (ha)", "Square Inch (in²)",
+    "Square Foot (ft²)", "Square Yard (yd²)",
+    // Volume
+    "Liter (L)", "Milliliter (mL)", "Cubic Meter (m³)",
+    "Cubic Centimeter (cm³)",
+    "Cubic Millimeter (mm³)", "Cubic Foot (ft³)", "Cubic Yard (yd³)",
+    // Quantity
+    "Piece (pcs)", "Number (nos)", "Pack (pkt)", "Dozen (doz)", "Pair (pr)",
+    // Time
+    "Hour (hr)", "Minute (min)", "Second (sec)", "Day", "Week", "Month",
+    "Year", "Manday",
+    // Others
+    "Roll", "Bundle", "Set", "Box", "Container", "Sheet"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    double w = MediaQuery.sizeOf(context).width;
+
+    return Autocomplete<String>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<String>.empty();
+        }
+        return units.where((unit) =>
+            unit.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (String selection) {
+        _unitController.text = selection;
+      },
+      fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+        _unitController.text = controller.text;
+        return Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Units of Measuremetn',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: w * 0.03),
+                ),
+                Text(
+                  '*',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w500, color: Colors.red),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              onFieldSubmitted: (value) => onFieldSubmitted(),
+              decoration: InputDecoration(
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(0.2)), // Lighter border
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(0.2)), // Lighter border
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey
+                          .withOpacity(0.4)), // Slightly darker on focus
+                ),
+                constraints: BoxConstraints(maxHeight: 50),
+                contentPadding: EdgeInsets.all(16),
+                prefixIconConstraints: BoxConstraints(maxHeight: 20),
+                hintText: 'Enter Unit of Measurement',
+                hintStyle: TextStyle(
+                  fontSize: w * 0.03,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: Colors.grey.withOpacity(0.2), // Lighter border
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+          ],
+        );
+      },
     );
   }
 }

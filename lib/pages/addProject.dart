@@ -23,6 +23,16 @@ class _AddProjectPageState extends State<AddProjectPage> {
   final TextEditingController _endDateController = TextEditingController();
 
   List<Map<String, dynamic>> workOrders = [];
+  num _amount = 0;
+  num _profit = 0;
+  void _calculateTotal() {
+    _amount = 0;
+    _profit = 0;
+    for (var order in workOrders) {
+      _amount += order['amount'];
+      _profit += order['profit'];
+    }
+  }
 
   // Reference to your project controller
   final ProjectController projectController = ProjectController();
@@ -71,7 +81,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;
-
+    _calculateTotal();
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
@@ -191,7 +201,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text('Project Photos',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: w * 0.03)),
                     ),
                     SizedBox(height: 5),
                     PragatiDottedButton(
@@ -214,15 +225,149 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Work Orders',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Work Orders',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        ...workOrders.map(
+                          (order) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color:
+                                          Colors.grey.withValues(alpha: 0.3))),
+                              child: ExpansionTile(
+                                backgroundColor: Colors.white,
+                                collapsedBackgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                    side: BorderSide(
+                                        color:
+                                            Colors.grey.withValues(alpha: 0))),
+                                title: Text(
+                                  order['name'],
+                                  style: TextStyle(fontSize: w * 0.04),
+                                ),
+                                subtitle: Text(
+                                  'Rs.${order['amount']}',
+                                  style: TextStyle(fontSize: w * 0.025),
+                                ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Unit of Measurement',
+                                              style:
+                                                  TextStyle(fontSize: w * 0.03),
+                                            ),
+                                            Text(
+                                              order['unit'],
+                                              style: TextStyle(
+                                                  fontSize: w * 0.03,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Quantity',
+                                              style:
+                                                  TextStyle(fontSize: w * 0.03),
+                                            ),
+                                            Text(
+                                              order['quantity'],
+                                              style: TextStyle(
+                                                  fontSize: w * 0.03,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Rate',
+                                              style:
+                                                  TextStyle(fontSize: w * 0.03),
+                                            ),
+                                            Text(
+                                              order['rate'],
+                                              style: TextStyle(
+                                                  fontSize: w * 0.03,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Amount',
+                                              style:
+                                                  TextStyle(fontSize: w * 0.03),
+                                            ),
+                                            Text(
+                                              order['amount'].toString(),
+                                              style: TextStyle(
+                                                  fontSize: w * 0.03,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Expected Margin',
+                                              style:
+                                                  TextStyle(fontSize: w * 0.03),
+                                            ),
+                                            Text(
+                                              '${order['margin']}% ${order['profit']}',
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: w * 0.03,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    ...workOrders.map((order) => ListTile(
-                          title: Text(order['name']),
-                          subtitle: Text('Amount: Rs.${order['amount']}'),
-                        )),
                     SizedBox(height: 8),
                     SizedBox(
                       width: double.infinity,
@@ -270,19 +415,53 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 ),
               ),
             ),
-            SizedBox(height: 50),
+            SizedBox(height: 150),
           ],
         ),
       ),
       floatingActionButton: workOrders.isNotEmpty
-          ? Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              child: PragatiButton(
-                  onPressed: _createProject, child: Text('Add Project')),
+          ? Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              height: 110,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total Amount:',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      Text(
+                        'Rs. $_amount',
+                        style: TextStyle(fontSize: 10),
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Expected Profit:',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      Text(
+                        'Rs. $_profit',
+                        style: TextStyle(fontSize: 10),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  PragatiButton(
+                      onPressed: _createProject, child: Text('Add Project')),
+                ],
+              ),
             )
           : SizedBox(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

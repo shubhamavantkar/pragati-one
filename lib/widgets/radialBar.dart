@@ -9,12 +9,14 @@ class SemiRadialGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.sizeOf(context).width;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Stack(children: [
           CustomPaint(
-            size: const Size(50, 40), // Width and height
+            size: Size(w * 0.12, 40), // Width and height
             painter: SemiCirclePainter(value / 100), // Convert to 0-1 range
           ),
           Positioned(
