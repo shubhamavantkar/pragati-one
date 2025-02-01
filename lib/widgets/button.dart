@@ -7,12 +7,16 @@ class PragatiButton extends StatelessWidget {
   final Color backgroundColor;
   final bool outlinedButton;
   final bool enabled;
+  final double borderRadius;
+  final outlinedBorderColor;
   const PragatiButton(
       {super.key,
       required this.onPressed,
       required this.child,
       this.backgroundColor = primaryColor,
       this.enabled = true,
+      this.borderRadius = 8.0,
+      this.outlinedBorderColor = primaryColor,
       this.outlinedButton = false});
 
   @override
@@ -33,9 +37,9 @@ class PragatiButton extends StatelessWidget {
               foregroundColor: WidgetStatePropertyAll(Colors.white),
               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(borderRadius),
                       side: outlinedButton
-                          ? BorderSide(color: primaryColor)
+                          ? BorderSide(color: outlinedBorderColor)
                           : BorderSide(color: Colors.transparent)))),
           child: child),
     );

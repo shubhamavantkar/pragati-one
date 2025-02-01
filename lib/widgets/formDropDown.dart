@@ -43,18 +43,20 @@ class FormDropdown extends StatelessWidget {
         DropdownButtonFormField<String>(
           // value: selectedValue,
           isExpanded: true,
+          dropdownColor: Colors.white,
+
           decoration: InputDecoration(
             constraints: BoxConstraints(maxHeight: 50),
-            contentPadding: EdgeInsets.all(8),
+            contentPadding: EdgeInsets.all(10),
             hintText: hintText,
             hintStyle: TextStyle(
-                fontSize: w * 0.01,
+                fontSize: w * 0.04,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey.withValues(alpha: 0.5)),
+                color: Colors.grey.withValues(alpha: 0.3)),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                  color: Colors.grey.withAlpha(128),
+                  color: Colors.grey.withValues(alpha: 0.5),
                 )),
           ),
           items: items
