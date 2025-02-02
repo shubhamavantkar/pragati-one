@@ -12,7 +12,6 @@ class AddWorkOrderPage extends StatefulWidget {
 
 class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
   final TextEditingController _packageNameController = TextEditingController();
-  final TextEditingController _unitController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   TextEditingController _expectedMarginController = TextEditingController();
@@ -197,13 +196,14 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
   }
 }
 
+final TextEditingController _unitController = TextEditingController();
+
 class UnitSearchField extends StatefulWidget {
   @override
   _UnitSearchFieldState createState() => _UnitSearchFieldState();
 }
 
 class _UnitSearchFieldState extends State<UnitSearchField> {
-  final TextEditingController _unitController = TextEditingController();
   final List<String> units = [
     // Weight
     "Kilogram (kg)", "Gram (g)", "Ton (t)",
