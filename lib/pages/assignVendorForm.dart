@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/models/project.dart';
-import 'package:pragati/widgets/addWorkItemToPackage.dart';
+import 'package:pragati/pages/addWorkItemToPackage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
@@ -25,18 +25,6 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
   final TextEditingController _vendorEmailController = TextEditingController();
   final TextEditingController _gstNumberController = TextEditingController();
   String? _vendorType;
-
-  void showCustomDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AddWorkItemToPackage(
-          project: widget.project,
-          vendorType: _vendorType!,
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +141,13 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                           outlinedBorderColor: Colors.grey.shade300,
                           onPressed: () {
                             if (_vendorType != null) {
-                              showCustomDialog(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddWorkItemToPackage(
+                                        project: widget.project,
+                                        vendorType: _vendorType!),
+                                  ));
                             } else {
                               Fluttertoast.showToast(
                                   msg: 'Please select vendor type first',
