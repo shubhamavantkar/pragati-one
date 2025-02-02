@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/assignSupervisor.dart';
 import 'package:pragati/pages/assignVendorScreen.dart';
 import 'package:pragati/widgets/button.dart';
 
 class AssignScreen extends StatefulWidget {
-  const AssignScreen({super.key});
+  Project project;
+  AssignScreen({super.key, required this.project});
 
   @override
   State<AssignScreen> createState() => _AssignScreenState();
@@ -87,7 +89,11 @@ class _AssignScreenState extends State<AssignScreen> {
             child: Container(
               padding: EdgeInsets.all(16),
               color: Colors.white,
-              child: _assignVendor ? AssignVendorScreen() : AssignSupervisor(),
+              child: _assignVendor
+                  ? AssignVendorScreen(
+                      project: widget.project,
+                    )
+                  : AssignSupervisor(),
             ),
           ),
         ],

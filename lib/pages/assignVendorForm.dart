@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
+import 'package:pragati/widgets/addWorkItemToPackage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
 
 class AssignVendorForm extends StatefulWidget {
-  AssignVendorForm({super.key});
+  Project project;
+  AssignVendorForm({super.key, required this.project});
 
   @override
   State<AssignVendorForm> createState() => _AssignVendorFormState();
@@ -20,13 +24,26 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
 
   final TextEditingController _vendorEmailController = TextEditingController();
   final TextEditingController _gstNumberController = TextEditingController();
+  String? _vendorType;
+
+  void showCustomDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AddWorkItemToPackage(
+          project: widget.project,
+          vendorType: _vendorType!,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
+      backgroundColor: const Color.fromARGB(232, 242, 240, 252),
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -34,123 +51,135 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  FormTextField(
-                      hintText: 'Enter Vendor Name',
-                      label: 'Vendor Name',
-                      necessary: true,
-                      controller: _vendorNameController),
-                  FormTextField(
-                      keyboardType: TextInputType.phone,
-                      hintText: 'Enter Mobile Number',
-                      label: 'Mobile Number',
-                      necessary: true,
-                      controller: _vendorMobileNumberController),
-                  FormTextField(
-                      keyboardType: TextInputType.emailAddress,
-                      hintText: 'Enter Email',
-                      label: 'Email',
-                      necessary: true,
-                      controller: _vendorEmailController),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'GSTIN',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: w * 0.03),
-                      ),
-                      Transform.scale(
-                        scale: 0.5,
-                        child: Switch(
-                          value: _gstin,
-                          onChanged: (value) {
-                            setState(() {
-                              _gstin = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  // GST Number field
-                  _buildGSTField(),
-                  SizedBox(height: 10),
-                  FormDropdown(
-                      necessary: true,
-                      label: 'Vendor Type',
-                      items: [
-                        'Material Supplier',
-                        'Manpower Supply',
-                        'Petty Contractor',
-                        'Asset Vendor'
-                      ],
-                      hintText: 'Select Vendor Type',
-                      onChanged: (string) {})
-                ],
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            color: Colors.white,
-            child: Padding(
+            Container(
+              color: Colors.white,
+              child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    FormTextField(
+                        hintText: 'Enter Vendor Name',
+                        label: 'Vendor Name',
+                        necessary: true,
+                        controller: _vendorNameController),
+                    FormTextField(
+                        keyboardType: TextInputType.phone,
+                        hintText: 'Enter Mobile Number',
+                        label: 'Mobile Number',
+                        necessary: true,
+                        controller: _vendorMobileNumberController),
+                    FormTextField(
+                        keyboardType: TextInputType.emailAddress,
+                        hintText: 'Enter Email',
+                        label: 'Email',
+                        controller: _vendorEmailController),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Work Order",
+                          'GSTIN',
                           style: TextStyle(
-                              fontSize: w * 0.03, fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.w600, fontSize: w * 0.03),
                         ),
-                        Text(
-                          '*',
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        )
+                        Transform.scale(
+                          scale: 0.5,
+                          child: Switch(
+                            value: _gstin,
+                            onChanged: (value) {
+                              setState(() {
+                                _gstin = value;
+                              });
+                            },
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    PragatiButton(
-                        outlinedButton: true,
-                        outlinedBorderColor: Colors.grey.shade300,
-                        onPressed: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Add Work',
-                              style: TextStyle(
-                                  fontSize: w * 0.035,
-                                  color: Colors.grey.shade300),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.grey.shade300,
-                            )
-                          ],
-                        )),
+                    // GST Number field
+                    _buildGSTField(),
+                    SizedBox(height: 10),
+                    FormDropdown(
+                        necessary: true,
+                        label: 'Vendor Type',
+                        items: [
+                          'Material Supplier',
+                          'Manpower Supply',
+                          'Petty Contractor',
+                          'Asset Vendor'
+                        ],
+                        hintText: 'Select Vendor Type',
+                        onChanged: (vendor) {
+                          _vendorType = vendor;
+                        })
                   ],
-                )),
-          )
-        ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              color: Colors.white,
+              child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Work Order",
+                            style: TextStyle(
+                                fontSize: w * 0.03,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            '*',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      PragatiButton(
+                          outlinedButton: true,
+                          outlinedBorderColor: Colors.grey.shade300,
+                          onPressed: () {
+                            if (_vendorType != null) {
+                              showCustomDialog(context);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: 'Please select vendor type first',
+                                  backgroundColor: Colors.redAccent);
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Add Work',
+                                style: TextStyle(
+                                    fontSize: w * 0.035,
+                                    color: Colors.grey.shade300),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey.shade300,
+                              )
+                            ],
+                          )),
+                    ],
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/workPackage.dart';
 import 'package:pragati/pages/workOrderPage.dart';
 import 'package:pragati/widgets/button.dart';
+import 'package:pragati/widgets/expandableWorkPackage.dart';
 import 'package:pragati/widgets/formTextField.dart';
 import 'package:pragati/widgets/pragatiDottedButton.dart';
 import 'package:pragati/controllers/projectController.dart'; // Import the controller
@@ -22,15 +24,15 @@ class _AddProjectPageState extends State<AddProjectPage> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
-  List<Map<String, dynamic>> workOrders = [];
+  List<WorkPackage> workOrders = [];
   num _amount = 0;
   num _profit = 0;
   void _calculateTotal() {
     _amount = 0;
     _profit = 0;
     for (var order in workOrders) {
-      _amount += order['amount'];
-      _profit += order['profit'];
+      _amount += order.amount;
+      _profit += order.profit;
     }
   }
 
@@ -247,133 +249,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                           height: 5,
                         ),
                         ...workOrders.map(
-                          (order) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color:
-                                          Colors.grey.withValues(alpha: 0.3))),
-                              child: ExpansionTile(
-                                backgroundColor: Colors.white,
-                                collapsedBackgroundColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12)),
-                                    side: BorderSide(
-                                        color:
-                                            Colors.grey.withValues(alpha: 0))),
-                                title: Text(
-                                  order['name'],
-                                  style: TextStyle(fontSize: w * 0.04),
-                                ),
-                                subtitle: Text(
-                                  'Rs.${order['amount']}',
-                                  style: TextStyle(fontSize: w * 0.025),
-                                ),
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Unit of Measurement',
-                                              style:
-                                                  TextStyle(fontSize: w * 0.03),
-                                            ),
-                                            Text(
-                                              order['unit'],
-                                              style: TextStyle(
-                                                  fontSize: w * 0.03,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Quantity',
-                                              style:
-                                                  TextStyle(fontSize: w * 0.03),
-                                            ),
-                                            Text(
-                                              order['quantity'],
-                                              style: TextStyle(
-                                                  fontSize: w * 0.03,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Rate',
-                                              style:
-                                                  TextStyle(fontSize: w * 0.03),
-                                            ),
-                                            Text(
-                                              order['rate'],
-                                              style: TextStyle(
-                                                  fontSize: w * 0.03,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Amount',
-                                              style:
-                                                  TextStyle(fontSize: w * 0.03),
-                                            ),
-                                            Text(
-                                              order['amount'].toString(),
-                                              style: TextStyle(
-                                                  fontSize: w * 0.03,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Expected Margin',
-                                              style:
-                                                  TextStyle(fontSize: w * 0.03),
-                                            ),
-                                            Text(
-                                              '${order['margin']}% ${order['profit']}',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: w * 0.03,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                            (order) => ExpandableWorkPackage(order: order)),
                       ],
                     ),
                     SizedBox(height: 8),

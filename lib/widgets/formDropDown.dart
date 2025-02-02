@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class FormDropdown extends StatelessWidget {
@@ -40,34 +41,26 @@ class FormDropdown extends StatelessWidget {
         SizedBox(
           height: 5,
         ),
-        DropdownButtonFormField<String>(
+        CustomDropdown<String>(
           // value: selectedValue,
-          isExpanded: true,
-          dropdownColor: Colors.white,
-
-          decoration: InputDecoration(
-            constraints: BoxConstraints(maxHeight: 50),
-            contentPadding: EdgeInsets.all(10),
-            hintText: hintText,
-            hintStyle: TextStyle(
-                fontSize: w * 0.04,
+          // isExpanded: true,
+          // dropdownColor: Colors.white,
+          decoration: CustomDropdownDecoration(
+              closedBorderRadius: BorderRadius.circular(8),
+              headerStyle: TextStyle(fontWeight: FontWeight.normal),
+              listItemStyle: TextStyle(fontWeight: FontWeight.normal),
+              hintStyle: TextStyle(
+                fontSize: w * 0.035,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey.withValues(alpha: 0.3)),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: Colors.grey.withValues(alpha: 0.5),
-                )),
-          ),
-          items: items
-              .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: TextStyle(fontSize: w * 0.035),
-                    ),
-                  ))
-              .toList(),
+                color: Colors.grey.withValues(alpha: 0.5),
+              ),
+              closedFillColor: Colors.white,
+              closedBorder: Border.all(color: Colors.grey.shade300)),
+          hintText: hintText,
+          itemsListPadding: EdgeInsets.all(0),
+
+          items: items,
+
           onChanged: onChanged,
         ),
         SizedBox(

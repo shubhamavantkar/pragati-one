@@ -16,14 +16,6 @@ class ProjectHomePage extends StatefulWidget {
 class _ProjectHomePageState extends State<ProjectHomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    AssignScreen(),
-    // ProgressScreen(),
-    DashboardScreen(),
-    // MaterialScreen(),
-    // AccountScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -32,6 +24,15 @@ class _ProjectHomePageState extends State<ProjectHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      AssignScreen(
+        project: widget.project,
+      ),
+      // ProgressScreen(),
+      DashboardScreen(),
+      // MaterialScreen(),
+      // AccountScreen(),
+    ];
     double w = MediaQuery.sizeOf(context).width;
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,

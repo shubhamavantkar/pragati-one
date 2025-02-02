@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/models/project.dart';
+import 'package:pragati/models/workPackage.dart';
 import 'package:pragati/widgets/cashFlowIndicator.dart';
 import 'package:pragati/widgets/projectCard.dart';
 import 'package:pragati/widgets/searchField.dart';
@@ -140,7 +141,15 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                                   project: Project.new(
                                       projectName: 'Project Pragati',
                                       projectLocation: 'Bald Street, Haripur',
-                                      projectOwner: 'Jin Sakai'),
+                                      projectOwner: 'Jin Sakai',
+                                      workpackages: [
+                                        WorkPackage(
+                                            packageName: 'packageName',
+                                            measurementUnit: 'measurementUnit',
+                                            quantity: 20,
+                                            rate: 100,
+                                            margin: 12)
+                                      ]),
                                 ),
                                 SizedBox(
                                   height: 10,
@@ -149,7 +158,15 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                                   project: Project.new(
                                       projectName: 'Project Zen',
                                       projectLocation: 'Maple Street, Kyoto',
-                                      projectOwner: 'Samurai Jack'),
+                                      projectOwner: 'Samurai Jack',
+                                      workpackages: [
+                                        WorkPackage(
+                                            packageName: 'packageName',
+                                            measurementUnit: 'measurementUnit',
+                                            quantity: 20,
+                                            rate: 100,
+                                            margin: 12)
+                                      ]),
                                 ),
                               ],
                             ),
@@ -162,7 +179,15 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                                   project: Project.new(
                                       projectName: 'Project Alpha',
                                       projectLocation: 'Sunset Blvd, Tokyo',
-                                      projectOwner: 'Hideo Kojima'),
+                                      projectOwner: 'Hideo Kojima',
+                                      workpackages: [
+                                        WorkPackage(
+                                            packageName: 'packageName',
+                                            measurementUnit: 'measurementUnit',
+                                            quantity: 20,
+                                            rate: 100,
+                                            margin: 12)
+                                      ]),
                                 ),
                               ],
                             ),

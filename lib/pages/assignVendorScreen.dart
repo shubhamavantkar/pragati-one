@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/assignVendorForm.dart';
 import 'package:pragati/widgets/searchField.dart';
 
 class AssignVendorScreen extends StatelessWidget {
-  const AssignVendorScreen({super.key});
+  Project project;
+  AssignVendorScreen({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,9 @@ class AssignVendorScreen extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AssignVendorForm(),
+                builder: (context) => AssignVendorForm(
+                  project: project,
+                ),
               ));
         },
         child: Icon(
