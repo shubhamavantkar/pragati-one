@@ -158,8 +158,12 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             },
                             child: AbsorbPointer(
                               child: FormTextField(
+                                suffix: Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.grey.shade300,
+                                ),
                                 controller: _startDateController,
-                                hintText: 'Select Start Date',
+                                hintText: 'Start Date',
                                 label: 'Start Date',
                                 prefixImage: SizedBox(),
                               ),
@@ -187,8 +191,12 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             },
                             child: AbsorbPointer(
                               child: FormTextField(
+                                suffix: Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.grey.shade300,
+                                ),
                                 controller: _endDateController,
-                                hintText: 'Select End Date',
+                                hintText: 'End Date',
                                 label: 'End Date',
                                 prefixImage: SizedBox(),
                               ),
@@ -370,6 +378,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     ),
                     SizedBox(height: 8),
                     SizedBox(
+                      height: 45,
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
@@ -403,6 +412,11 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     ),
                     SizedBox(height: 16),
                     FormTextField(
+                      suffix: Icon(
+                        Icons.percent,
+                        color: Colors.grey.shade300,
+                        size: 20,
+                      ),
                       controller: _retentionController,
                       hintText: '% of Retention',
                       label: 'Retention',

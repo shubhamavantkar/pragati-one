@@ -4,6 +4,7 @@ class FormTextField extends StatelessWidget {
   final String label;
   final String hintText;
   final Widget? prefixImage;
+  final Icon? suffix;
   final bool necessary;
   final TextEditingController controller; // Added controller
   final Function(String)? onChanged; // Add the onChanged parameter
@@ -16,6 +17,7 @@ class FormTextField extends StatelessWidget {
     required this.label,
     this.prefixImage,
     this.necessary = false,
+    this.suffix,
     required this.controller, // Added controller as a required parameter
     this.onChanged, // Initialize onChanged
   });
@@ -50,6 +52,7 @@ class FormTextField extends StatelessWidget {
           scrollPadding: EdgeInsets.all(16),
           onChanged: onChanged, // Pass onChanged to the TextField
           decoration: InputDecoration(
+            suffixIcon: suffix ?? suffix,
             disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: Colors.grey.withOpacity(0.2)), // Lighter border
@@ -74,7 +77,7 @@ class FormTextField extends StatelessWidget {
                 : SizedBox(width: 5),
             hintText: hintText,
             hintStyle: TextStyle(
-              fontSize: w * 0.03,
+              fontSize: w * 0.035,
               fontWeight: FontWeight.w500,
               color: Colors.grey.withOpacity(0.5),
             ),

@@ -124,6 +124,11 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
                   _calculateAmount(), // Recalculate amount on change
             ),
             FormTextField(
+              suffix: Icon(
+                Icons.percent,
+                color: Colors.grey.shade300,
+                size: 20,
+              ),
               keyboardType: TextInputType.numberWithOptions(),
               controller: _expectedMarginController,
               hintText: 'Enter Expected Margin',
@@ -249,7 +254,7 @@ class _UnitSearchFieldState extends State<UnitSearchField> {
             Row(
               children: [
                 Text(
-                  'Units of Measuremetn',
+                  'Units of Measurement',
                   style: TextStyle(
                       fontWeight: FontWeight.w600, fontSize: w * 0.03),
                 ),
