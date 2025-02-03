@@ -93,7 +93,9 @@ class _AssignScreenState extends State<AssignScreen> {
                   ? AssignVendorScreen(
                       project: widget.project,
                     )
-                  : AssignSupervisor(),
+                  : AssignSupervisor(
+                      project: widget.project,
+                    ),
             ),
           ),
         ],

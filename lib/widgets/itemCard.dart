@@ -16,7 +16,6 @@ class ItemCard extends StatelessWidget {
       child: Container(
         height: 85,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
