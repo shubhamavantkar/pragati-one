@@ -17,7 +17,7 @@ class AssignVendorScreen extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AssignVendorForm(),
+                builder: (context) => AssignVendorForm(projectId: '',),
               ));
         },
         child: Icon(

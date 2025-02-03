@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
 
 class AssignVendorForm extends StatefulWidget {
-  AssignVendorForm({super.key});
+  final String projectId;
+  
+  AssignVendorForm({super.key, required this.projectId});
 
   @override
   State<AssignVendorForm> createState() => _AssignVendorFormState();
@@ -14,12 +18,37 @@ class AssignVendorForm extends StatefulWidget {
 class _AssignVendorFormState extends State<AssignVendorForm> {
   bool _gstin = false;
   final TextEditingController _vendorNameController = TextEditingController();
-
-  final TextEditingController _vendorMobileNumberController =
-      TextEditingController();
-
+  final TextEditingController _vendorMobileNumberController = TextEditingController();
   final TextEditingController _vendorEmailController = TextEditingController();
   final TextEditingController _gstNumberController = TextEditingController();
+
+  List<dynamic> _workOrders = [];
+  String? _selectedWorkOrder;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWorkOrders();
+  }
+
+  Future<void> _fetchWorkOrders() async {
+    final url = Uri.parse('http://api.pragatione.com/project/679d01c837b7caf40d44f232/work-orders');
+    
+    try {
+      final response = await http.get(url);
+      print(response.body);
+      if (response.statusCode == 200) {
+        setState(() {
+          _workOrders = json.decode(response.body);
+          print(_workOrders);
+        });
+      } else {
+        print('Failed to load work orders: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching work orders: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +65,7 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Container(
             color: Colors.white,
             child: Padding(
@@ -83,7 +110,6 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                       ),
                     ],
                   ),
-                  // GST Number field
                   _buildGSTField(),
                   SizedBox(height: 10),
                   FormDropdown(
@@ -101,56 +127,44 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
               ),
             ),
           ),
-          SizedBox(
-            height: 15,
-          ),
+          SizedBox(height: 15),
           Container(
             color: Colors.white,
             child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Work Order",
-                          style: TextStyle(
-                              fontSize: w * 0.03, fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          '*',
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    PragatiButton(
-                        outlinedButton: true,
-                        outlinedBorderColor: Colors.grey.shade300,
-                        onPressed: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Add Work',
-                              style: TextStyle(
-                                  fontSize: w * 0.035,
-                                  color: Colors.grey.shade300),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.grey.shade300,
-                            )
-                          ],
-                        )),
-                  ],
-                )),
-          )
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Work Order",
+                      style: TextStyle(fontSize: w * 0.03, fontWeight: FontWeight.w600)),
+                  SizedBox(height: 5),
+                  _buildWorkOrderDropdown(),
+                ],
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWorkOrderDropdown() {
+    return DropdownButtonFormField(
+      value: _selectedWorkOrder,
+      items: _workOrders.map<DropdownMenuItem<String>>((order) {
+        return DropdownMenuItem<String>(
+          value: order['_id'], 
+          child: Text(order['name']), // Adjust based on API response structure
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedWorkOrder = newValue;
+        });
+      },
+      decoration: InputDecoration(
+        hintText: 'Select Work Order',
+        border: OutlineInputBorder(),
       ),
     );
   }

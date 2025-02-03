@@ -21,39 +21,40 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
   bool _isValid = true; // Validation flag
 
   void _calculateAmount() {
-    double quantity = double.tryParse(_quantityController.text) ?? 0.0;
-    double rate = double.tryParse(_rateController.text) ?? 0.0;
+  double quantity = double.tryParse(_quantityController.text) ?? 0.0;
+  double rate = double.tryParse(_rateController.text) ?? 0.0;
 
-    setState(() {
-      _amount = quantity * rate;
-    });
-  }
+  setState(() {
+    _amount = quantity * rate;
+  });
+}
 
   void _calculateMargin() {
-    int margin = int.tryParse(_expectedMarginController.text) ?? 0;
+  int margin = int.tryParse(_expectedMarginController.text) ?? 0;
 
-    if (margin > 100) {
-      _expectedMarginController.text = '100';
-      margin = 100;
-    }
-    setState(() {
-      _expectedProfit = _amount * (margin / 100);
-    });
+  if (margin > 100) {
+    _expectedMarginController.text = '100';
+    margin = 100;
   }
+  setState(() {
+    _expectedProfit = _amount * (margin / 100);
+  });
+}
 
-  void _saveWorkPackage() {
-    // Validate required fields
-    if (_packageNameController.text.isEmpty ||
-        _unitController.text.isEmpty ||
-        _quantityController.text.isEmpty ||
-        _rateController.text.isEmpty ||
-        _expectedMarginController.text.isEmpty ||
-        _amount <= 0) {
-      setState(() {
-        _isValid = false;
-      });
-      return; // Exit if validation fails
-    }
+ void _saveWorkPackage() {
+  // Validate required fields
+  if (_packageNameController.text.isEmpty ||
+      _unitController.text.isEmpty ||
+      _quantityController.text.isEmpty ||
+      _rateController.text.isEmpty ||
+      _expectedMarginController.text.isEmpty ||
+      _amount <= 0 ||
+      _expectedProfit <= 0) {
+    setState(() {
+      _isValid = false;
+    });
+    return; // Exit if validation fails
+  }
 
     // Pass back the work package data
     Navigator.pop(context, {
@@ -164,9 +165,12 @@ class _AddWorkOrderPageState extends State<AddWorkOrderPage> {
               height: 20,
             ),
             if (!_isValid)
-              Text(
-                'Please fill all required fields correctly!',
-                style: TextStyle(color: Colors.red, fontSize: 12),
+              Container(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text(
+                  'Please fill all required fields correctly!',
+                  style: TextStyle(color: Colors.red, fontSize: 12),
+                ),
               ),
             SizedBox(height: 10),
             SizedBox(

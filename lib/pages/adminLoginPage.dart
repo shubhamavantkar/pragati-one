@@ -3,6 +3,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phonenumbers/phonenumbers.dart';
 
 import 'package:pragati/controllers/authController.dart';
+import 'package:pragati/models/project.dart';
+import 'package:pragati/pages/projectDashboard.dart';
 import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/loadingDialog.dart';
 import 'package:pragati/widgets/loginButtons.dart';
@@ -119,12 +121,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                             _phoneNumberController.value!.formattedNumber,
                         onOtpEntered: (String otp) async {
                           try {
-                            // Show loading dialog
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterFormPage(),
-                                ));
+                            
                             PragatiDialogs()
                                 .showLoadingDialog(context, "Verifying OTP");
 
@@ -139,14 +136,12 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                                   .pop(); // Close loading dialog
                             }
 
-                            print(isOtpVerified);
-
                             if (isOtpVerified) {
                               if (context.mounted) {
                                 // On successful OTP verification, navigate to RegisterFormPage
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                      builder: (context) => RegisterFormPage()),
+                                      builder: (context) => ProjectDashboard()),
                                 );
                               }
                             } else {
