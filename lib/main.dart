@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/landingPage.dart';
 import 'package:pragati/pages/dashboardScreen.dart'; // Import the ProjectDashboard
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure that async code runs before app starts
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure that async code runs before app starts
   bool isLoggedIn = await checkIfLoggedIn(); // Check if token exists
 
   runApp(MyApp(isLoggedIn: isLoggedIn)); // Pass the login status to the MyApp
@@ -34,7 +34,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         useMaterial3: true,
       ),
-      home: isLoggedIn ? DashboardScreen() : LandingPage(), // Navigate based on login status
+      home: isLoggedIn
+          ? DashboardScreen()
+          : LandingPage(), // Navigate based on login status
     );
   }
 }

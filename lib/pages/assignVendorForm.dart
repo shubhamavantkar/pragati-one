@@ -127,6 +127,42 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                       )
                     ],
                   ),
+                  workOrders.isNotEmpty
+                      ? SizedBox(
+                          height: workOrders.length *
+                              50, // Set a max height for the list
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: workOrders.length,
+                            itemBuilder: (context, index) {
+                              return PragatiButton(
+                                  outlinedButton: true,
+                                  outlinedBorderColor: Colors.grey.shade300,
+                                  onPressed: () {},
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        workOrders
+                                            .elementAt(index)
+                                            .keys
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: w * 0.035,
+                                            color: Colors.grey.shade700),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        color: Colors.grey.shade700,
+                                      )
+                                    ],
+                                  ));
+                            },
+                          ),
+                        )
+                      : Text('No work orders added yet'),
                   SizedBox(height: 5),
                   PragatiButton(
                       outlinedButton: true,
@@ -172,41 +208,6 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                   SizedBox(height: 20),
 
                   /// **Fix: ListView with Proper Sizing**
-                  workOrders.isNotEmpty
-                      ? SizedBox(
-                          height: h * 0.3, // Set a max height for the list
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: workOrders.length,
-                            itemBuilder: (context, index) {
-                              return PragatiButton(
-                                  outlinedButton: true,
-                                  outlinedBorderColor: Colors.grey.shade300,
-                                  onPressed: () {},
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        workOrders
-                                            .elementAt(index)
-                                            .keys
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: w * 0.035,
-                                            color: Colors.grey.shade700),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        color: Colors.grey.shade700,
-                                      )
-                                    ],
-                                  ));
-                            },
-                          ),
-                        )
-                      : Text('No work orders added yet'),
 
                   /// **Fix: "Add Work" Button Stays Below List**
                 ],

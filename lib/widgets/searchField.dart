@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SearchField extends StatelessWidget {
+  double borderRadius;
   String hintText;
-  SearchField({super.key, this.hintText = ''});
+  SearchField({super.key, this.hintText = '', this.borderRadius = 8});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class SearchField extends StatelessWidget {
         elevation: WidgetStatePropertyAll(0),
         backgroundColor: WidgetStatePropertyAll(Colors.white),
         shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(borderRadius),
             side: BorderSide(
                 color: Color(0xFFD5E0F6), style: BorderStyle.solid))),
       ),

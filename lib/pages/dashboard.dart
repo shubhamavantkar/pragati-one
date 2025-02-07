@@ -6,14 +6,14 @@ import 'package:pragati/widgets/cashFlowIndicator.dart';
 import 'package:pragati/widgets/projectCard.dart';
 import 'package:pragati/widgets/searchField.dart';
 
-class ProjectDashboard extends StatefulWidget {
-  const ProjectDashboard({super.key});
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
 
   @override
-  _ProjectDashboardState createState() => _ProjectDashboardState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _ProjectDashboardState extends State<ProjectDashboard>
+class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 

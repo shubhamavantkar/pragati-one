@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/addProject.dart';
 import 'package:pragati/pages/dashboardScreen.dart';
-import 'package:pragati/pages/projectDashboard.dart';
+import 'package:pragati/pages/dashboard.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';

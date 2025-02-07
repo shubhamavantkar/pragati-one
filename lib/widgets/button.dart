@@ -33,7 +33,7 @@ class PragatiButton extends StatelessWidget {
                   ? WidgetStatePropertyAll(Colors.white)
                   : enabled
                       ? WidgetStatePropertyAll(primaryColor)
-                      : WidgetStatePropertyAll(Colors.grey),
+                      : WidgetStatePropertyAll(Colors.grey.shade400),
               foregroundColor: WidgetStatePropertyAll(Colors.white),
               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
