@@ -50,6 +50,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
       'workOrders': workOrders, // Add the work orders here
     };
 
+print(projectData);
     try {
       // Retrieve token
       String? token = await getToken();

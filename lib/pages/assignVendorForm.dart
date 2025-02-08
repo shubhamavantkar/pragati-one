@@ -128,9 +128,9 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                     ],
                   ),
                   SizedBox(height: 5),
+                  // Update the onPressed callback for adding work orders
                   PragatiButton(
                       outlinedButton: true,
-                      outlinedBorderColor: Colors.grey.shade300,
                       onPressed: () async {
                         if (_vendorType != null) {
                           final items = await Navigator.push(
@@ -169,17 +169,19 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                           )
                         ],
                       )),
-                  SizedBox(height: 20),
 
-                  /// **Fix: ListView with Proper Sizing**
+// Update the ListView.builder to display the work order name correctly
                   workOrders.isNotEmpty
                       ? SizedBox(
-                          height: h * 0.3, // Set a max height for the list
+                          height: h * 0.3,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics: AlwaysScrollableScrollPhysics(),
                             itemCount: workOrders.length,
                             itemBuilder: (context, index) {
+                              String workOrderName =
+                                  workOrders[index].keys.first ??
+                                      'Unnamed Work Order';
                               return PragatiButton(
                                   outlinedButton: true,
                                   outlinedBorderColor: Colors.grey.shade300,
@@ -189,10 +191,7 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        workOrders
-                                            .elementAt(index)
-                                            .keys
-                                            .toString(),
+                                        workOrderName,
                                         style: TextStyle(
                                             fontSize: w * 0.035,
                                             color: Colors.grey.shade700),

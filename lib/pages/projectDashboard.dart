@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/controllers/projectController.dart';
+import 'package:pragati/controllers/tokeController.dart';
 import 'package:pragati/models/project.dart';
 import 'package:pragati/models/workPackage.dart';
 import 'package:pragati/widgets/cashFlowIndicator.dart';
@@ -16,17 +18,38 @@ class ProjectDashboard extends StatefulWidget {
 class _ProjectDashboardState extends State<ProjectDashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late Future<List<Project>> _projectsFuture;
+  List<Project> _ongoingProjects = [];
+  List<Project> _completedProjects = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadProjects();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadProjects() async {
+    try {
+      final token = await getToken(); // Fetch token from UserController
+      ProjectController _projectController = ProjectController();
+
+      final data = await _projectController.getAllProjects(token!);
+      print(data);
+      setState(() {
+         _ongoingProjects = data.map((data) => Project.fromJson(data)).toList();
+        _completedProjects = [];
+        print(_ongoingProjects[0].clientName);
+      });
+    } catch (e) {
+      print('Error loading projects: $e');
+    }
   }
 
   @override
@@ -136,60 +159,59 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                           // Ongoing Projects
                           SingleChildScrollView(
                             child: Column(
-                              children: [
-                                ProjectCard(
-                                  project: Project.new(
-                                      projectName: 'Project Pragati',
-                                      projectLocation: 'Bald Street, Haripur',
-                                      projectOwner: 'Jin Sakai',
-                                      workpackages: [
-                                        WorkPackage(
-                                            packageName: 'packageName',
-                                            measurementUnit: 'measurementUnit',
-                                            quantity: 20,
-                                            rate: 100,
-                                            margin: 12)
-                                      ]),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                ProjectCard(
-                                  project: Project.new(
-                                      projectName: 'Project Zen',
-                                      projectLocation: 'Maple Street, Kyoto',
-                                      projectOwner: 'Samurai Jack',
-                                      workpackages: [
-                                        WorkPackage(
-                                            packageName: 'packageName',
-                                            measurementUnit: 'measurementUnit',
-                                            quantity: 20,
-                                            rate: 100,
-                                            margin: 12)
-                                      ]),
-                                ),
-                              ],
+                              children: _ongoingProjects
+                                  .map((project) => ProjectCard(
+                                        project: Project(
+                                          projectId: project.projectId,
+                                          projectName: project.projectName,
+                                          location: project.location,
+                                          clientName: project.clientName,
+                                          workpackages:
+                                              project.workpackages.isNotEmpty
+                                                  ? project.workpackages
+                                                  : [
+                                                      WorkPackage(
+                                                        packageName:
+                                                            'Default Package',
+                                                        measurementUnit: 'Unit',
+                                                        quantity: 0,
+                                                        rate: 0,
+                                                        margin: 0,
+                                                      ),
+                                                    ],
+                                        ),
+                                      ))
+                                  .toList(),
                             ),
                           ),
+                          SizedBox(height: 10),
+
                           // Completed Projects
-                          SingleChildScrollView(
+                           SingleChildScrollView(
                             child: Column(
-                              children: [
-                                ProjectCard(
-                                  project: Project.new(
-                                      projectName: 'Project Alpha',
-                                      projectLocation: 'Sunset Blvd, Tokyo',
-                                      projectOwner: 'Hideo Kojima',
-                                      workpackages: [
-                                        WorkPackage(
-                                            packageName: 'packageName',
-                                            measurementUnit: 'measurementUnit',
-                                            quantity: 20,
-                                            rate: 100,
-                                            margin: 12)
-                                      ]),
-                                ),
-                              ],
+                              children: _completedProjects
+                                  .map((project) => ProjectCard(
+                                        project: Project(
+                                          projectId: project.projectId,
+                                          projectName: project.projectName,
+                                          location: project.location,
+                                          clientName: project.clientName,
+                                          workpackages:
+                                              project.workpackages.isNotEmpty
+                                                  ? project.workpackages
+                                                  : [
+                                                      WorkPackage(
+                                                        packageName:
+                                                            'Default Package',
+                                                        measurementUnit: 'Unit',
+                                                        quantity: 0,
+                                                        rate: 0,
+                                                        margin: 0,
+                                                      ),
+                                                    ],
+                                        ),
+                                      ))
+                                  .toList(),
                             ),
                           ),
                         ],

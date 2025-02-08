@@ -12,6 +12,8 @@ import 'package:pragati/widgets/formTextField.dart';
 import 'package:pragati/widgets/itemCard.dart';
 import 'package:pragati/widgets/measurementUnitDropDown.dart';
 import 'package:pragati/widgets/secondaryButton.dart';
+import 'package:pragati/controllers/projectController.dart';
+import 'package:pragati/controllers/tokeController.dart';
 
 class AddWorkItemToPackage extends StatefulWidget {
   Project project;
@@ -25,8 +27,9 @@ class AddWorkItemToPackage extends StatefulWidget {
 
 class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
   String? selectedWorkPackage;
-
+  String? selectedWorkOrderId; // To store the selected work order ID
   List<Item> items = [];
+  List<Map<String, dynamic>> workOrders = []; // List to hold work orders
 
   int _totalAmount = 0;
 
@@ -46,9 +49,66 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
     }
   }
 
+  // Function to fetch work orders for the selected project
+  Future<void> _loadWorkOrders() async {
+    try {
+      print('Loading work orders for package: $selectedWorkPackage');
+      ProjectController _projectController = ProjectController();
+      final token = await getToken();
+      if (token == null) {
+        print('Token is null');
+        Fluttertoast.showToast(msg: 'Authentication token not found');
+        return;
+      }
+
+      setState(() {
+        // Clear existing work orders while loading
+        workOrders = [];
+      });
+
+      final workOrdersData = await _projectController.getAllWorkOrders(
+          widget.project.projectId, token);
+
+      print('Received work orders data: $workOrdersData');
+
+      if (workOrdersData.isEmpty) {
+        print('No work orders found in response');
+        Fluttertoast.showToast(msg: 'No work orders found for this project');
+        return;
+      }
+
+      setState(() {
+        // Load all work orders
+        workOrders = workOrdersData;
+
+        print('Updated work orders state: $workOrders');
+
+        if (workOrders.isEmpty) {
+          print('No work orders found for selected package');
+          Fluttertoast.showToast(
+              msg: 'No work orders found for selected package');
+        }
+      });
+    } catch (e) {
+      print('Error loading work orders: $e'); // Debug print
+      Fluttertoast.showToast(msg: 'Failed to load work orders: $e');
+      setState(() {
+        workOrders = [];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Load work orders immediately when screen loads
+    _loadWorkOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: scaffoldBackgroundColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: items.isNotEmpty
@@ -77,10 +137,16 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
                     ),
                     PragatiButton(
                         onPressed: () {
-                          Navigator.pop(
-                            context,
-                            {selectedWorkPackage: items},
-                          );
+                          print(selectedWorkPackage);
+                          print(items);
+                          print(selectedWorkOrderId);
+                          
+                          if (selectedWorkPackage != null && items.isNotEmpty) {
+                            Navigator.pop(
+                              context,
+                             {selectedWorkPackage: items},
+                            );
+                          }
                         },
                         child: Text('Add to Package')),
                   ],
@@ -142,17 +208,41 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
               color: Colors.white,
               child: Column(
                 children: [
+                  // Fetch work orders immediately when screen loads
                   FormDropdown(
-                    label: 'Work Package',
-                    items: widget.project.workpackages
-                        .map((wp) => wp.packageName)
+                    label: 'Work Order',
+                    items: workOrders
+                        .where((wo) =>
+                            wo['name'] != null &&
+                            wo['name'].toString().isNotEmpty)
+                        .map((wo) => wo['name'].toString())
                         .toList(),
                     necessary: true,
-                    hintText: 'Select Work Package',
-                    onChanged: (package) {
-                      setState(() {
-                        selectedWorkPackage = package;
-                      });
+                    hintText: 'Select Work Order',
+                    onChanged: (orderName) {
+                      if (orderName != null) {
+                        setState(() {
+                          try {
+                            var selectedOrder = workOrders.firstWhere(
+                              (wo) => wo['name'] == orderName,
+                            );
+                            if (selectedOrder['_id'] != null &&
+                                selectedOrder['name'] != null) {
+                              selectedWorkOrderId =
+                                  selectedOrder['_id'].toString();
+                              selectedWorkPackage =
+                                  selectedOrder['name'].toString();
+                            } else {
+                              selectedWorkOrderId = null;
+                              selectedWorkPackage = null;
+                            }
+                          } catch (e) {
+                            // If no work order is found, reset the selection
+                            selectedWorkOrderId = null;
+                            selectedWorkPackage = null;
+                          }
+                        });
+                      }
                     },
                   ),
                 ],
@@ -168,13 +258,15 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    if (selectedWorkPackage != null)
+                    if (selectedWorkPackage != null &&
+                        selectedWorkOrderId != null)
                       PragatiSecondaryButton(
                         label: 'Add Item',
                         onPressed: _showAddItemDialog,
                       )
                     else
-                      Text('Please select a package to continue'),
+                      Text(
+                          'Please select a package and work order to continue'),
                     SizedBox(
                       height: 10,
                     ),
