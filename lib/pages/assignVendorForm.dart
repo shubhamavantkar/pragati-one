@@ -127,6 +127,42 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                       )
                     ],
                   ),
+                  workOrders.isNotEmpty
+                      ? SizedBox(
+                          height: workOrders.length *
+                              50, // Set a max height for the list
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: workOrders.length,
+                            itemBuilder: (context, index) {
+                              return PragatiButton(
+                                  outlinedButton: true,
+                                  outlinedBorderColor: Colors.grey.shade300,
+                                  onPressed: () {},
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        workOrders
+                                            .elementAt(index)
+                                            .keys
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: w * 0.035,
+                                            color: Colors.grey.shade700),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        color: Colors.grey.shade700,
+                                      )
+                                    ],
+                                  ));
+                            },
+                          ),
+                        )
+                      : Text('No work orders added yet'),
                   SizedBox(height: 5),
                   // Update the onPressed callback for adding work orders
                   PragatiButton(

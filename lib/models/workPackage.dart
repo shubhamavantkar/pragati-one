@@ -16,8 +16,7 @@ class WorkPackage {
     this.amount = 0,
     this.profit = 0,
   });
-
-  // Convert JSON to WorkPackage object
+// Existing fromJson method
   factory WorkPackage.fromJson(Map<String, dynamic> json) {
     return WorkPackage(
       packageName: json['packageName'] ?? '',
@@ -28,5 +27,18 @@ class WorkPackage {
       amount: json['amount'] ?? 0,
       profit: json['profit'] ?? 0,
     );
+  }
+
+  // New method: Converts to a custom JSON structure for saving.
+  Map<String, dynamic> toSaveJson() {
+    return {
+      'name': packageName,
+      'unitOfMeasurement': measurementUnit,
+      'quantity': quantity,
+      'rate': rate,
+      'amount': amount,
+      'expectedMargin': margin, // If you intend to save margin as expectedMargin.
+      // If you want to use profit instead, then replace margin with profit.
+    };
   }
 }

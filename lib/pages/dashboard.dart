@@ -8,14 +8,14 @@ import 'package:pragati/widgets/cashFlowIndicator.dart';
 import 'package:pragati/widgets/projectCard.dart';
 import 'package:pragati/widgets/searchField.dart';
 
-class ProjectDashboard extends StatefulWidget {
-  const ProjectDashboard({super.key});
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
 
   @override
-  _ProjectDashboardState createState() => _ProjectDashboardState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _ProjectDashboardState extends State<ProjectDashboard>
+class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late Future<List<Project>> _projectsFuture;
@@ -43,7 +43,12 @@ class _ProjectDashboardState extends State<ProjectDashboard>
       final data = await _projectController.getAllProjects(token!);
       print(data);
       setState(() {
-         _ongoingProjects = data.map((data) => Project.fromJson(data)).toList();
+        _ongoingProjects = data
+            .map((data) => Project.fromJson(data))
+            .toList()
+            .reversed
+            .toList();
+
         _completedProjects = [];
         print(_ongoingProjects[0].clientName);
       });
@@ -187,7 +192,7 @@ class _ProjectDashboardState extends State<ProjectDashboard>
                           SizedBox(height: 10),
 
                           // Completed Projects
-                           SingleChildScrollView(
+                          SingleChildScrollView(
                             child: Column(
                               children: _completedProjects
                                   .map((project) => ProjectCard(

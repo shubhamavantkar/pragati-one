@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/addProject.dart';
 import 'package:pragati/pages/eTenderScreen.dart';
-import 'package:pragati/pages/projectDashboard.dart';
+import 'package:pragati/pages/dashboard.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -15,7 +15,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const ProjectDashboard(),
+    const Dashboard(),
     const ETenderScreen(),
   ];
 

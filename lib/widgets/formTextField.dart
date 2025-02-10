@@ -47,6 +47,8 @@ class FormTextField extends StatelessWidget {
           height: 5,
         ),
         TextFormField(
+          minLines: keyboardType == TextInputType.multiline ? 3 : 1,
+          maxLines: keyboardType == TextInputType.multiline ? 3 : 1,
           keyboardType: keyboardType,
           controller: controller, // Pass the controller here
           scrollPadding: EdgeInsets.all(16),
@@ -66,7 +68,8 @@ class FormTextField extends StatelessWidget {
                   color:
                       Colors.grey.withOpacity(0.4)), // Slightly darker on focus
             ),
-            constraints: BoxConstraints(maxHeight: 50),
+            constraints: BoxConstraints(
+                maxHeight: keyboardType == TextInputType.multiline ? 300 : 50),
             contentPadding: EdgeInsets.all(16),
             prefixIconConstraints: BoxConstraints(maxHeight: 20),
             prefixIcon: prefixImage != null
