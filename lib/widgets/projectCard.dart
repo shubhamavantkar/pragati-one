@@ -68,7 +68,7 @@ class ProjectCard extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                            project.projectOwner,
+                            project.clientName,
                             style: TextStyle(
                                 fontSize: w * 0.03,
                                 fontWeight: FontWeight.w500),
@@ -85,7 +85,7 @@ class ProjectCard extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                            project.projectLocation,
+                            project.location,
                             style: TextStyle(
                                 fontSize: w * 0.03,
                                 fontWeight: FontWeight.w500),

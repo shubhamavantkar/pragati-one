@@ -235,7 +235,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
         // Navigate to the AddProjectPage after a successful update
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddProjectPage()),
+          MaterialPageRoute(builder: (context) => DashboardScreen()),
         );
       } else {
         print('No token found');

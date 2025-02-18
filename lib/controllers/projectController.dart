@@ -151,23 +151,30 @@ class ProjectController {
   Future<List<Map<String, dynamic>>> getAllWorkOrders(
       String projectId, String token) async {
     try {
+      print('Fetching work orders for project: $projectId'); // Debug print
       final response = await http.get(
-        Uri.parse('$apiUrl/projects/$projectId/work-orders'),
+        Uri.parse('$apiUrl/project/$projectId/work-orders'),
         headers: {
-          'Authorization': 'Bearer $token', // Send token for authentication
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
+      print('Work orders API response: ${response.body}'); // Debug print
+
       if (response.statusCode == 200) {
         List<dynamic> workOrders = jsonDecode(response.body);
-        return workOrders
+        var mappedOrders = workOrders
             .map((workOrder) => workOrder as Map<String, dynamic>)
             .toList();
+        print('Mapped work orders: $mappedOrders'); // Debug print
+        return mappedOrders;
       } else {
+        print('API error: ${response.statusCode} - ${response.body}'); // Debug print
         throw Exception('Failed to fetch work orders: ${response.body}');
       }
     } catch (error) {
+      print('Exception in getAllWorkOrders: $error'); // Debug print
       throw Exception('Error: $error');
     }
   }
