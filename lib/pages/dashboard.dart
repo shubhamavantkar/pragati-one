@@ -97,6 +97,7 @@ class _DashboardState extends State<Dashboard>
                       children: [
                         CashFlowIndicator(amount: 24357, label: 'Cash Inflow'),
                         CashFlowIndicator(
+                            showDropdown: true,
                             amount: 76543,
                             label: 'Cash Outflow',
                             outflow: true),

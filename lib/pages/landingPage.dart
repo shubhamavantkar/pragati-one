@@ -10,6 +10,8 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;
+    double h = MediaQuery.sizeOf(context).height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -49,10 +51,10 @@ class LandingPage extends StatelessWidget {
           children: [
             Image.asset(
               'assets/ConstructionSiteVector.png',
-              height: 303,
+              height: h * 0.35,
             ),
             SizedBox(
-              height: 20,
+              height: h * 0.02,
             ),
             Padding(
               padding: const EdgeInsets.all(24.0),
@@ -63,7 +65,7 @@ class LandingPage extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/logo.png',
-                        height: 39,
+                        height: w * 0.075,
                       ),
                       SizedBox(
                         width: 5,
@@ -88,7 +90,7 @@ class LandingPage extends StatelessWidget {
                         height: 1.4),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: h * 0.01,
                   ),
                   Text(
                     'Manage projects, track materials, handle vendors, and streamline workflows with ease. Pragati empowers contractors to focus on building while we simplify the rest”',
@@ -101,7 +103,7 @@ class LandingPage extends StatelessWidget {
                     textAlign: TextAlign.justify,
                   ),
                   SizedBox(
-                    height: 30,
+                    height: h * 0.03,
                   ),
                   PragatiButton(
                     onPressed: () {
@@ -117,7 +119,7 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 15,
+                    height: h * 0.015,
                   ),
                   PragatiButton(
                     onPressed: () {},

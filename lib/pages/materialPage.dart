@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/issuematerial.dart';
 import 'package:pragati/pages/receivedMaterial.dart';
+import 'package:pragati/pages/recoinsilationMaterial.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/materialStatusToggleSwitch.dart';
 import 'package:pragati/widgets/searchField.dart';
@@ -120,7 +121,7 @@ class _MaterialScreenState extends State<MaterialScreen> {
                   ? ReceivedMaterial()
                   : _materialType[1]
                       ? IssueMaterial()
-                      : SizedBox(),
+                      : RecoinsilationMaterial(),
             ),
           ),
         ],

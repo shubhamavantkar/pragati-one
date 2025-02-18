@@ -6,6 +6,7 @@ import 'package:pragati/models/vendorType.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
+import 'package:pragati/widgets/itemNameDropDown.dart';
 import 'package:pragati/widgets/measurementUnitDropDown.dart';
 import 'package:pragati/widgets/secondaryButton.dart';
 
@@ -19,7 +20,7 @@ class AddItemDialog extends StatefulWidget {
 
 class _AddItemDialogState extends State<AddItemDialog> {
   final TextEditingController _unitController = TextEditingController();
-
+  final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
   final TextEditingController _rateController = TextEditingController();
@@ -97,13 +98,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
               SizedBox(
                 height: 20,
               ),
-              FormDropdown(
-                  label: 'Item Name',
-                  items: VendorType().vendorType[widget.vendorType],
-                  hintText: 'Select Item',
-                  onChanged: (item) {
-                    _itemName = item;
-                  }),
+              itemNameDropDown(unitController: _itemNameController),
               UnitSearchField(unitController: _unitController),
               FormTextField(
                   hintText: 'Enter Quantity',
