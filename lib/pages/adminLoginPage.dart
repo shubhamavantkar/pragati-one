@@ -9,6 +9,8 @@ import 'package:pragati/widgets/loginButtons.dart';
 import 'package:pragati/widgets/otpButtons.dart';
 import 'package:pragati/widgets/pragatiCircleAvatarLogo.dart';
 import 'package:pragati/widgets/pragatiTextDivider.dart';
+import 'package:pragati/models/user.dart';
+import 'package:pragati/pages/dashboardScreen.dart';
 
 class AdminLoginPage extends StatefulWidget {
   AdminLoginPage({super.key});
@@ -119,35 +121,40 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                             _phoneNumberController.value!.formattedNumber,
                         onOtpEntered: (String otp) async {
                           try {
-                            // Show loading dialog
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterFormPage(),
-                                ));
                             PragatiDialogs()
                                 .showLoadingDialog(context, "Verifying OTP");
 
                             final isOtpVerified =
                                 await _authController.verifyOtp(
-                                    _phoneNumberController
-                                        .value!.formattedNumber,
-                                    otp);
+                              _phoneNumberController.value!.formattedNumber,
+                              otp,
+                            );
 
                             if (context.mounted) {
                               Navigator.of(context)
                                   .pop(); // Close loading dialog
                             }
 
-                            print(isOtpVerified);
-
                             if (isOtpVerified) {
+                              // Check if user data exists in SharedPreferences
+                              final user = await User.getSavedUser();
+
                               if (context.mounted) {
-                                // On successful OTP verification, navigate to RegisterFormPage
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => RegisterFormPage()),
-                                );
+                                if (user != null) {
+                                  // User exists - navigate to Dashboard
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DashboardScreen()),
+                                  );
+                                } else {
+                                  // New user - navigate to Registration
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            RegisterFormPage()),
+                                  );
+                                }
                               }
                             } else {
                               Fluttertoast.showToast(
