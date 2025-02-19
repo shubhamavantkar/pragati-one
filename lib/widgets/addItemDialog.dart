@@ -40,9 +40,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
     if (_unitController.text.isNotEmpty &&
         _quantityController.text.isNotEmpty &&
         _rateController.text.isNotEmpty &&
-        _itemName != null) {
+        _itemNameController.text.isNotEmpty) {
       Item item = Item(
-          itemName: _itemName!,
+          itemName: _itemNameController.text,
           unit: _unitController.text,
           rate: int.parse(_rateController.text),
           amount: _amount,
