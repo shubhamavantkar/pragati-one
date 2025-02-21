@@ -26,7 +26,7 @@ class UserController {
         },
         body: json.encode(userData),
       );
-
+      print(response);
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         return User.fromJson(
