@@ -19,7 +19,21 @@ class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late Future<List<Project>> _projectsFuture;
-  List<Project> _ongoingProjects = [];
+  List<Project> _ongoingProjects = [
+    Project(
+        projectId: 'projectId',
+        projectName: 'Demo Pro',
+        location: 'Mumbai',
+        clientName: 'L&T',
+        workpackages: [
+          WorkPackage(
+              packageName: 'GT Road',
+              measurementUnit: 'Box',
+              quantity: 200,
+              rate: 2000,
+              margin: 5)
+        ])
+  ];
   List<Project> _completedProjects = [];
 
   @override
