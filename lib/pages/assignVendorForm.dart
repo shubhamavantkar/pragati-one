@@ -108,6 +108,7 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
             ),
             SizedBox(height: 15),
             Container(
+              constraints: BoxConstraints(minHeight: h * 0.4),
               color: Colors.white,
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -128,41 +129,110 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                     ],
                   ),
                   workOrders.isNotEmpty
-                      ? SizedBox(
-                          height: workOrders.length *
-                              50, // Set a max height for the list
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: workOrders.length,
-                            itemBuilder: (context, index) {
-                              return PragatiButton(
-                                  outlinedButton: true,
-                                  outlinedBorderColor: Colors.grey.shade300,
-                                  onPressed: () {},
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        workOrders
-                                            .elementAt(index)
-                                            .keys
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: w * 0.035,
-                                            color: Colors.grey.shade700),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        color: Colors.grey.shade700,
-                                      )
-                                    ],
-                                  ));
-                            },
-                          ),
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemCount: workOrders.length,
+                          itemBuilder: (context, index) {
+                            var workOrder = workOrders[index];
+                            String? workOrderTitle = workOrder.keys.first;
+                            List<Item> items = workOrder.values.first;
+                            int totalAmount =
+                                items.fold(0, (sum, item) => sum + item.amount);
+                            return Card(
+                              elevation: 0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 0),
+                              child: ExpansionTile(
+                                trailing: Text(
+                                  'Rs.${totalAmount.toString()}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14),
+                                ),
+                                backgroundColor: Colors.white,
+                                collapsedBackgroundColor: Colors.white,
+                                title: Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/package.png',
+                                      height: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      workOrderTitle ?? "Unknown Work Order",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                children: items.map((item) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              item.itemName,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Text(
+                                              "Rs.${item.amount}",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "UOM\n${item.unit}",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.grey[700]),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              "Quantity\n${item.quantity}",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.grey[700]),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              "Rate\n₹${item.rate}",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.grey[700]),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                        Divider(),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          },
                         )
-                      : Text('No work orders added yet'),
+                      : Center(child: Text('No work orders added yet')),
                   SizedBox(height: 5),
                   // Update the onPressed callback for adding work orders
                   PragatiButton(
@@ -250,6 +320,13 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: workOrders.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: PragatiButton(onPressed: () {}, child: Text('Save')),
+            )
+          : SizedBox(),
     );
   }
 
