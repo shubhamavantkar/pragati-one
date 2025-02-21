@@ -150,6 +150,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                                 );
                               }
                             } else {
+                              // Clear the OTP field so the user can re-enter the OTP
+
                               Fluttertoast.showToast(
                                 msg:
                                     "OTP verification failed. Please try again.",

@@ -7,6 +7,7 @@ import 'package:pragati/pages/addWorkItemToPackage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
+import 'package:pragati/controllers/vendorController.dart';
 
 class AssignVendorForm extends StatefulWidget {
   final Project project;
@@ -24,7 +25,9 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
   final TextEditingController _vendorEmailController = TextEditingController();
   final TextEditingController _gstNumberController = TextEditingController();
   String? _vendorType;
-  List<Map<String?, List<Item>>> workOrders = [];
+
+  // Each work order now returns a map with keys: "workPackageName", "workOrderId", "subCategories"
+  List<Map<String, dynamic>> workOrders = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,28 +53,33 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
               child: Column(
                 children: [
                   FormTextField(
-                      hintText: 'Enter Vendor Name',
-                      label: 'Vendor Name',
-                      necessary: true,
-                      controller: _vendorNameController),
+                    hintText: 'Enter Vendor Name',
+                    label: 'Vendor Name',
+                    necessary: true,
+                    controller: _vendorNameController,
+                  ),
                   FormTextField(
-                      keyboardType: TextInputType.phone,
-                      hintText: 'Enter Mobile Number',
-                      label: 'Mobile Number',
-                      necessary: true,
-                      controller: _vendorMobileNumberController),
+                    keyboardType: TextInputType.phone,
+                    hintText: 'Enter Mobile Number',
+                    label: 'Mobile Number',
+                    necessary: true,
+                    controller: _vendorMobileNumberController,
+                  ),
                   FormTextField(
-                      keyboardType: TextInputType.emailAddress,
-                      hintText: 'Enter Email',
-                      label: 'Email',
-                      controller: _vendorEmailController),
+                    keyboardType: TextInputType.emailAddress,
+                    hintText: 'Enter Email',
+                    label: 'Email',
+                    controller: _vendorEmailController,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'GSTIN',
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: w * 0.03),
+                          fontWeight: FontWeight.w600,
+                          fontSize: w * 0.03,
+                        ),
                       ),
                       Transform.scale(
                         scale: 0.5,
@@ -89,20 +97,21 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                   _buildGSTField(),
                   SizedBox(height: 10),
                   FormDropdown(
-                      necessary: true,
-                      label: 'Vendor Type',
-                      items: [
-                        'Material Supplier',
-                        'Manpower Supply',
-                        'Petty Contractor',
-                        'Asset Vendor'
-                      ],
-                      hintText: 'Select Vendor Type',
-                      onChanged: (vendor) {
-                        setState(() {
-                          _vendorType = vendor;
-                        });
-                      }),
+                    necessary: true,
+                    label: 'Vendor Type',
+                    items: [
+                      'Material Supplier',
+                      'Manpower Supply',
+                      'Petty Contractor',
+                      'Asset Vendor'
+                    ],
+                    hintText: 'Select Vendor Type',
+                    onChanged: (vendor) {
+                      setState(() {
+                        _vendorType = vendor;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -119,12 +128,16 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                       Text(
                         "Work Order",
                         style: TextStyle(
-                            fontSize: w * 0.04, fontWeight: FontWeight.w600),
+                          fontSize: w * 0.04,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Text(
                         '*',
                         style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold),
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       )
                     ],
                   ),
@@ -135,8 +148,9 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                           itemCount: workOrders.length,
                           itemBuilder: (context, index) {
                             var workOrder = workOrders[index];
-                            String? workOrderTitle = workOrder.keys.first;
-                            List<Item> items = workOrder.values.first;
+                            String? workOrderTitle =
+                                workOrder["workPackageName"];
+                            List<Item> items = workOrder["subCategories"];
                             int totalAmount =
                                 items.fold(0, (sum, item) => sum + item.amount);
                             return Card(
@@ -147,8 +161,9 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                                 trailing: Text(
                                   'Rs.${totalAmount.toString()}',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
                                 ),
                                 backgroundColor: Colors.white,
                                 collapsedBackgroundColor: Colors.white,
@@ -158,14 +173,13 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                                       'assets/package.png',
                                       height: 25,
                                     ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
+                                    SizedBox(width: 5),
                                     Text(
                                       workOrderTitle ?? "Unknown Work Order",
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -184,14 +198,16 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                                             Text(
                                               item.itemName,
                                               style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                             Text(
                                               "Rs.${item.amount}",
                                               style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -203,22 +219,25 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                                             Text(
                                               "UOM\n${item.unit}",
                                               style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.grey[700]),
+                                                fontSize: 10,
+                                                color: Colors.grey[700],
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
                                               "Quantity\n${item.quantity}",
                                               style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.grey[700]),
+                                                fontSize: 10,
+                                                color: Colors.grey[700],
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
                                               "Rate\n₹${item.rate}",
                                               style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.grey[700]),
+                                                fontSize: 10,
+                                                color: Colors.grey[700],
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -234,25 +253,26 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                         )
                       : Center(child: Text('No work orders added yet')),
                   SizedBox(height: 5),
-                  // Update the onPressed callback for adding work orders
+                  // "Add Work" button navigates to the AddWorkItemToPackage page.
                   PragatiButton(
                       outlinedButton: true,
                       onPressed: () async {
                         if (_vendorType != null) {
-                          final items = await Navigator.push(
+                          final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddWorkItemToPackage(
                                     project: widget.project,
                                     vendorType: _vendorType!),
                               ));
-                          if (items != null) {
-                            print(items);
+                          if (result != null) {
+                            print("Work order details received: $result");
                             setState(() {
-                              workOrders.add(items);
+                              // Expecting result to be a map with keys: "workPackageName", "workOrderId", "subCategories"
+                              workOrders.add(result);
                             });
                           } else {
-                            print('item is null');
+                            print('No work order items returned');
                           }
                         } else {
                           Fluttertoast.showToast(
@@ -266,8 +286,9 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                           Text(
                             'Add Work',
                             style: TextStyle(
-                                fontSize: w * 0.035,
-                                color: Colors.grey.shade300),
+                              fontSize: w * 0.035,
+                              color: Colors.grey.shade300,
+                            ),
                           ),
                           Icon(
                             Icons.arrow_forward_ios_rounded,
@@ -275,45 +296,6 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
                           )
                         ],
                       )),
-
-// Update the ListView.builder to display the work order name correctly
-                  // workOrders.isNotEmpty
-                  //     ? SizedBox(
-                  //         height: h * 0.3,
-                  //         child: ListView.builder(
-                  //           shrinkWrap: true,
-                  //           physics: AlwaysScrollableScrollPhysics(),
-                  //           itemCount: workOrders.length,
-                  //           itemBuilder: (context, index) {
-                  //             String workOrderName =
-                  //                 workOrders[index].keys.first ??
-                  //                     'Unnamed Work Order';
-                  //             return PragatiButton(
-                  //                 outlinedButton: true,
-                  //                 outlinedBorderColor: Colors.grey.shade300,
-                  //                 onPressed: () {},
-                  //                 child: Row(
-                  //                   mainAxisAlignment:
-                  //                       MainAxisAlignment.spaceBetween,
-                  //                   children: [
-                  //                     Text(
-                  //                       workOrderName,
-                  //                       style: TextStyle(
-                  //                           fontSize: w * 0.035,
-                  //                           color: Colors.grey.shade700),
-                  //                     ),
-                  //                     Icon(
-                  //                       Icons.arrow_forward_ios_rounded,
-                  //                       color: Colors.grey.shade700,
-                  //                     )
-                  //                   ],
-                  //                 ));
-                  //           },
-                  //         ),
-                  //       )
-                  //     : Text('No work orders added yet'),
-
-                  /// **Fix: "Add Work" Button Stays Below List**
                 ],
               ),
             ),
@@ -324,7 +306,64 @@ class _AssignVendorFormState extends State<AssignVendorForm> {
       floatingActionButton: workOrders.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: PragatiButton(onPressed: () {}, child: Text('Save')),
+              child: PragatiButton(
+                onPressed: () async {
+                  if (_vendorNameController.text.isEmpty ||
+                      _vendorMobileNumberController.text.isEmpty ||
+                      _vendorType == null ||
+                      workOrders.isEmpty) {
+                    Fluttertoast.showToast(
+                        msg: 'Please fill all required fields',
+                        backgroundColor: Colors.redAccent);
+                    return;
+                  }
+
+                  // Transform workOrders into assignedWorkPackages as expected.
+                  List<Map<String, dynamic>> assignedWorkPackages =
+                      workOrders.map((wp) {
+                    // Each wp is expected to have keys: "workPackageName", "workOrderId", "subCategories"
+                    return {
+                      "projectId": widget.project.projectId,
+                      "workOrderId": wp["workOrderId"],
+                      "workPackageName": wp["workPackageName"],
+                      "selectedVendorType": _vendorType,
+                      "subCategories":
+                          (wp["subCategories"] as List<Item>).map((item) {
+                        return {
+                          "name": item.itemName,
+                          "unitOfMeasurement": item.unit,
+                          "quantity": item.quantity,
+                          "rate": item.rate,
+                          "amount": item.amount,
+                        };
+                      }).toList(),
+                    };
+                  }).toList();
+                  print(assignedWorkPackages);
+                  bool success = await VendorController.createVendor(
+                    vendorName: _vendorNameController.text,
+                    mobileNumber: _vendorMobileNumberController.text,
+                    email: _vendorEmailController.text.isNotEmpty
+                        ? _vendorEmailController.text
+                        : null,
+                    gstin: _gstin ? _gstNumberController.text : null,
+                    vendorType: _vendorType!,
+                    assignedWorkPackages: assignedWorkPackages,
+                  );
+
+                  if (success) {
+                    Fluttertoast.showToast(
+                        msg: 'Vendor assigned successfully!',
+                        backgroundColor: Colors.green);
+                    Navigator.pop(context);
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: 'Failed to assign vendor',
+                        backgroundColor: Colors.redAccent);
+                  }
+                },
+                child: Text('Save'),
+              ),
             )
           : SizedBox(),
     );
