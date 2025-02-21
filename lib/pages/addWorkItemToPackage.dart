@@ -108,7 +108,6 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: scaffoldBackgroundColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: items.isNotEmpty
@@ -137,15 +136,27 @@ class _AddWorkItemToPackageState extends State<AddWorkItemToPackage> {
                     ),
                     PragatiButton(
                         onPressed: () {
-                          print(selectedWorkPackage);
-                          print(items);
-                          print(selectedWorkOrderId);
-                          
-                          if (selectedWorkPackage != null && items.isNotEmpty) {
+                          // Print variables for debugging
+                          print("Selected Work Package: $selectedWorkPackage");
+                          print("Selected Work Order ID: $selectedWorkOrderId");
+                          print("Items: $items");
+
+                          if (selectedWorkPackage != null &&
+                              selectedWorkOrderId != null &&
+                              items.isNotEmpty) {
                             Navigator.pop(
                               context,
-                             {selectedWorkPackage: items},
+                              {
+                                "workPackageName": selectedWorkPackage,
+                                "workOrderId": selectedWorkOrderId,
+                                "subCategories": items,
+                              },
                             );
+                          } else {
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Please select a work package and work order, and add at least one item",
+                                backgroundColor: Colors.redAccent);
                           }
                         },
                         child: Text('Add to Package')),

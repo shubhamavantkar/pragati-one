@@ -31,50 +31,48 @@ class AuthController {
         return false;
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error: $e', backgroundColor: Colors.redAccent);
+      Fluttertoast.showToast(
+          msg: 'Error: $e', backgroundColor: Colors.redAccent);
       return false;
     }
   }
 
   Future<bool> verifyOtp(String phoneNumber, String otp) async {
-  try {
-    final response = await http.post(
-      Uri.parse("$baseUrl/user/register"),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'mobile': phoneNumber,
-        'otp': otp,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/register"),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'mobile': phoneNumber,
+          'otp': otp,
+        }),
+      );
 
-    print(response.statusCode);
-    if (response.statusCode == 201) {
-      final responseData = json.decode(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        final responseData = json.decode(response.body);
 
-      if (responseData.containsKey('token')) {
-        final String token = responseData['token']; // The authentication token
+        if (responseData.containsKey('token')) {
+          final String token =
+              responseData['token']; // The authentication token
 
-        // Optionally, you can save the token or use it in your app
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', token);
-        Fluttertoast.showToast(
-            msg: responseData['message'], backgroundColor: Colors.green);
+          // Optionally, you can save the token or use it in your app
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('authToken', token);
+          Fluttertoast.showToast(
+              msg: responseData['message'], backgroundColor: Colors.green);
 
-        return true; // OTP verified successfully
+          return true; // OTP verified successfully
+        } else {
+          return false; // Token not found in response
+        }
       } else {
-        return false; // Token not found in response
+        return false; // OTP verification failed or wrong status code
       }
-    } else {
-      return false; // OTP verification failed or wrong status code
+    } catch (e) {
+      // Handle error (e.g., network issues)
+      print('Error: $e');
+      return false;
     }
-  } catch (e) {
-    // Handle error (e.g., network issues)
-    print('Error: $e');
-    return false;
   }
 }
-}
-
-
-
-
