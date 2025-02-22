@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phonenumbers/phonenumbers.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pragati/controllers/authController.dart';
 import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/loadingDialog.dart';
@@ -9,6 +11,8 @@ import 'package:pragati/widgets/loginButtons.dart';
 import 'package:pragati/widgets/otpButtons.dart';
 import 'package:pragati/widgets/pragatiCircleAvatarLogo.dart';
 import 'package:pragati/widgets/pragatiTextDivider.dart';
+import 'package:pragati/models/user.dart';
+import 'package:pragati/pages/dashboardScreen.dart';
 
 class AdminLoginPage extends StatefulWidget {
   AdminLoginPage({super.key});
@@ -119,42 +123,106 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                             _phoneNumberController.value!.formattedNumber,
                         onOtpEntered: (String otp) async {
                           try {
-                            // Show loading dialog
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterFormPage(),
-                                ));
                             PragatiDialogs()
                                 .showLoadingDialog(context, "Verifying OTP");
 
                             final isOtpVerified =
                                 await _authController.verifyOtp(
-                                    _phoneNumberController
-                                        .value!.formattedNumber,
-                                    otp);
+                              _phoneNumberController.value!.formattedNumber,
+                              otp,
+                            );
 
                             if (context.mounted) {
                               Navigator.of(context)
                                   .pop(); // Close loading dialog
                             }
-
                             print(isOtpVerified);
+                            if ((isOtpVerified
+                                as Map<String, dynamic>)['success']) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
 
-                            if (isOtpVerified) {
-                              if (context.mounted) {
-                                // On successful OTP verification, navigate to RegisterFormPage
+                              // Check for saved user data.
+                              User? savedUser = await User.getSavedUser();
+
+                              if (savedUser == null &&
+                                  isOtpVerified.containsKey('user')) {
+                                // Extract user data from API response
+                                final userData = isOtpVerified[
+                                    'user']; // responseData['user']
+                                final user = User.fromJson(userData);
+
+                                // Store user data in SharedPreferences
+                                await prefs.setString(
+                                    'userData', json.encode(user.toJson()));
+
+                                // Update savedUser reference after storing it
+                                savedUser = user;
+                              }
+
+                              if (savedUser == null) {
+                                // First-time user: navigate to RegisterFormPage.
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => RegisterFormPage()),
                                 );
+                              } else {
+                                // User data exists: navigate directly to DashboardScreen.
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardScreen()),
+                                );
                               }
                             } else {
-                              // Clear the OTP field so the user can re-enter the OTP
-
+                              // OTP verification failed: show an error toast
                               Fluttertoast.showToast(
-                                msg:
-                                    "OTP verification failed. Please try again.",
+                                msg: isOtpVerified.containsKey('message')
+                                    ? isOtpVerified['message']
+                                    : "OTP verification failed. Please try again.",
+                                backgroundColor: Colors.redAccent,
+                              );
+                            }
+                            if ((isOtpVerified
+                                as Map<String, dynamic>)['success']) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+
+                              // Check for saved user data.
+                              User? savedUser = await User.getSavedUser();
+
+                              if (savedUser == null &&
+                                  isOtpVerified.containsKey('user')) {
+                                // Extract user data from API response
+                                final userData = isOtpVerified[
+                                    'user']; // responseData['user']
+                                final user = User.fromJson(userData);
+
+                                // Store user data in SharedPreferences
+                                await prefs.setString(
+                                    'userData', json.encode(user.toJson()));
+
+                                // Update savedUser reference after storing it
+                                savedUser = user;
+                              }
+
+                              if (savedUser == null) {
+                                // First-time user: navigate to RegisterFormPage.
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterFormPage()),
+                                );
+                              } else {
+                                // User data exists: navigate directly to DashboardScreen.
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardScreen()),
+                                );
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: isOtpVerified.containsKey('message')
+                                    ? isOtpVerified['message']
+                                    : "OTP verification failed. Please try again.",
                                 backgroundColor: Colors.redAccent,
                               );
                             }

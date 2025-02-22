@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pragati/models/user.dart';
 
 class UserController {
   final String baseUrl = "http://api.pragatione.com";
 
-  Future<void> updateUser(Map<String, dynamic> userData) async {
+  Future<User?> updateUser(Map<String, dynamic> userData) async {
     final String url = "$baseUrl/user/update-user";
 
     try {
@@ -14,7 +15,7 @@ class UserController {
 
       if (token == null) {
         print("Error: Token not found in SharedPreferences.");
-        return;
+        return null;
       }
 
       final response = await http.post(
@@ -25,12 +26,14 @@ class UserController {
         },
         body: json.encode(userData),
       );
-
+      print(response);
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        print("User updated successfully: ${responseData['message']}");
+        final jsonResponse = jsonDecode(response.body);
+        return User.fromJson(
+            jsonResponse['user']); // Adapt to your API response structure
       } else {
-        print("Failed to update user: ${response.body}");
+        print("Error updating user: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
       print("Error updating user: $e");

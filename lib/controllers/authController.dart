@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pragati/models/user.dart';
 
 class AuthController {
   final String baseUrl = "http://api.pragatione.com";
@@ -37,7 +38,7 @@ class AuthController {
     }
   }
 
-  Future<bool> verifyOtp(String phoneNumber, String otp) async {
+  Future<Object> verifyOtp(String phoneNumber, String otp) async {
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/user/register"),
@@ -47,8 +48,6 @@ class AuthController {
           'otp': otp,
         }),
       );
-
-      print(response.statusCode);
       if (response.statusCode == 201) {
         final responseData = json.decode(response.body);
 
@@ -56,13 +55,18 @@ class AuthController {
           final String token =
               responseData['token']; // The authentication token
 
-          // Optionally, you can save the token or use it in your app
+          // Retrieve SharedPreferences instance.
           final prefs = await SharedPreferences.getInstance();
+          // Save the token.
           await prefs.setString('authToken', token);
-          Fluttertoast.showToast(
-              msg: responseData['message'], backgroundColor: Colors.green);
 
-          return true; // OTP verified successfully
+          Fluttertoast.showToast(
+            msg: responseData['message'],
+            backgroundColor: Colors.green,
+          );
+          final user = responseData['user'];
+          return {'success': true, 'user': user};
+
         } else {
           return false; // Token not found in response
         }
