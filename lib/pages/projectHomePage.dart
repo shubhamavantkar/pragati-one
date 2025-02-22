@@ -4,6 +4,7 @@ import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/assignScreen.dart';
 import 'package:pragati/pages/dashboardScreen.dart';
 import 'package:pragati/pages/materialPage.dart';
+import 'package:pragati/pages/progressPage.dart';
 
 class ProjectHomePage extends StatefulWidget {
   final Project project;
@@ -29,9 +30,7 @@ class _ProjectHomePageState extends State<ProjectHomePage> {
       AssignScreen(
         project: widget.project,
       ),
-      AssignScreen(
-        project: widget.project,
-      ),
+      ProgressPage(),
       AssignScreen(
         project: widget.project,
       ),

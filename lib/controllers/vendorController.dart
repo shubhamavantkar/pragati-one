@@ -1,56 +1,51 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pragati/constants/consts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// Function to create a vendor and return the response
-Future<Map<String, dynamic>> createVendor({
-  required String vendorName,
-  required String mobileNumber,
-  required String email,
-  required String vendorType,
-  required List<Map<String, dynamic>> assignedWorkPackages,
-}) async {
-  final String baseUrl = "{{URL}}"; // Replace with your actual base URL
-  final url = Uri.parse('$baseUrl/vendor/create');
+class VendorController {
+  static Future<bool> createVendor({
+    required String vendorName,
+    required String mobileNumber,
+    String? email,
+    String? gstin,
+    required String vendorType,
+    required List<Map<String, dynamic>> assignedWorkPackages,
+  }) async {
+    final String baseUrl = "http://api.pragatione.com";
+    try {
+      // Retrieve the stored token
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('authToken');
 
-  // Prepare the dynamic vendor data
-  final Map<String, dynamic> vendorData = {
-    "vendorName": vendorName,
-    "mobileNumber": mobileNumber,
-    "email": email,
-    "vendorType": vendorType,
-    "assignedWorkPackages": assignedWorkPackages,
-  };
+      if (token == null) {
+        throw Exception("Token is missing");
+      }
+      final response = await http.post(
+        Uri.parse('$baseUrl/vendor/create'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Include token here
+        },
+        body: jsonEncode({
+          "vendorName": vendorName,
+          "mobileNumber": mobileNumber,
+          "email": email,
+          "gstin": gstin,
+          "vendorType": vendorType,
+          "assignedWorkPackages": assignedWorkPackages,
+        }),
+      );
 
-  try {
-    // Send the POST request to create the vendor
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(vendorData),
-    );
-
-    // Handle the response
-    if (response.statusCode == 201) {
-      // Return the successful response body as a Map
-      return {
-        'status': 'success',
-        'message': 'Vendor created successfully',
-        'data': json.decode(response.body),
-      };
-    } else {
-      // Return error response with message
-      return {
-        'status': 'error',
-        'message': 'Failed to create vendor: ${response.statusCode}',
-        'data': json.decode(response.body),
-      };
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        print('Error: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Exception: $e');
+      return false;
     }
-  } catch (e) {
-    // Handle any error in the process and return the error response
-    return {
-      'status': 'error',
-      'message': 'Error creating vendor: $e',
-      'data': {},
-    };
   }
 }

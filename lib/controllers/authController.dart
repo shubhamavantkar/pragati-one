@@ -48,8 +48,6 @@ class AuthController {
           'otp': otp,
         }),
       );
-      print("############");
-      print(json.decode(response.body));
       if (response.statusCode == 201) {
         final responseData = json.decode(response.body);
 
@@ -68,6 +66,7 @@ class AuthController {
           );
           final user = responseData['user'];
           return {'success': true, 'user': user};
+
         } else {
           return false; // Token not found in response
         }

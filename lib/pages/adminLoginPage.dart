@@ -219,7 +219,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                                 );
                               }
                             } else {
-                              // OTP verification failed: show an error toast
                               Fluttertoast.showToast(
                                 msg: isOtpVerified.containsKey('message')
                                     ? isOtpVerified['message']
