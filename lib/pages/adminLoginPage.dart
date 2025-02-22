@@ -142,7 +142,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                               final prefs =
                                   await SharedPreferences.getInstance();
 
-                              // Check for saved user data.
+                              // Check for saved user data
                               User? savedUser = await User.getSavedUser();
 
                               if (savedUser == null &&
@@ -160,14 +160,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                                 savedUser = user;
                               }
 
-                              if (savedUser == null) {
-                                // First-time user: navigate to RegisterFormPage.
+                              // Check if required fields are missing
+                              if (savedUser == null ||
+                                  savedUser.name.isEmpty ||
+                                  savedUser.companyName.isEmpty) {
+                                // Redirect to RegisterFormPage for missing details
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => RegisterFormPage()),
                                 );
                               } else {
-                                // User data exists: navigate directly to DashboardScreen.
+                                // Redirect to DashboardScreen if all required details exist
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => DashboardScreen()),
@@ -175,50 +178,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                               }
                             } else {
                               // OTP verification failed: show an error toast
-                              Fluttertoast.showToast(
-                                msg: isOtpVerified.containsKey('message')
-                                    ? isOtpVerified['message']
-                                    : "OTP verification failed. Please try again.",
-                                backgroundColor: Colors.redAccent,
-                              );
-                            }
-                            if ((isOtpVerified
-                                as Map<String, dynamic>)['success']) {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-
-                              // Check for saved user data.
-                              User? savedUser = await User.getSavedUser();
-
-                              if (savedUser == null &&
-                                  isOtpVerified.containsKey('user')) {
-                                // Extract user data from API response
-                                final userData = isOtpVerified[
-                                    'user']; // responseData['user']
-                                final user = User.fromJson(userData);
-
-                                // Store user data in SharedPreferences
-                                await prefs.setString(
-                                    'userData', json.encode(user.toJson()));
-
-                                // Update savedUser reference after storing it
-                                savedUser = user;
-                              }
-
-                              if (savedUser == null) {
-                                // First-time user: navigate to RegisterFormPage.
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => RegisterFormPage()),
-                                );
-                              } else {
-                                // User data exists: navigate directly to DashboardScreen.
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => DashboardScreen()),
-                                );
-                              }
-                            } else {
                               Fluttertoast.showToast(
                                 msg: isOtpVerified.containsKey('message')
                                     ? isOtpVerified['message']

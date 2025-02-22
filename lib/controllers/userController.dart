@@ -17,7 +17,8 @@ class UserController {
         print("Error: Token not found in SharedPreferences.");
         return null;
       }
-
+      print("Token: $token");
+      print("User Data: $userData");
       final response = await http.post(
         Uri.parse(url),
         headers: {
@@ -26,11 +27,17 @@ class UserController {
         },
         body: json.encode(userData),
       );
-      print(response);
+      print(response.body);
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        return User.fromJson(
-            jsonResponse['user']); // Adapt to your API response structure
+        // Ensure the response is a valid map
+        if (jsonResponse == null || jsonResponse is! Map<String, dynamic>) {
+          print("Error: API response is not a valid JSON object.");
+          return null;
+        }
+
+        // Now deserialize it correctly
+        return User.fromJson(jsonResponse);
       } else {
         print("Error updating user: ${response.statusCode}");
         return null;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/pages/addProject.dart';
@@ -229,14 +231,23 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
       final token = prefs.getString('authToken');
 
       if (token != null) {
-        print(userData); // Debugging output to check the userData
-        await _userController.updateUser(userData);
+        // print(userData); // Debugging output to check the userData
+        final responseUser = await _userController.updateUser(userData);
 
-        // Navigate to the AddProjectPage after a successful update
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DashboardScreen()),
-        );
+        if (responseUser != null) {
+          // Save the user data in SharedPreferences
+          await prefs.setString('userData', jsonEncode(responseUser.toJson()));
+
+          print("User data saved successfully: ${responseUser.toJson()}");
+
+          // Navigate to Dashboard after saving user data
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen()),
+          );
+        } else {
+          print("Error: Failed to update user.");
+        }
       } else {
         print('No token found');
       }
