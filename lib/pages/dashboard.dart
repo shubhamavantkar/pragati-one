@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/controllers/projectController.dart';
 import 'package:pragati/controllers/tokeController.dart';
 import 'package:pragati/models/project.dart';
+import 'package:pragati/models/user.dart'; // Make sure this import points to your User model file.
 import 'package:pragati/models/workPackage.dart';
 import 'package:pragati/widgets/cashFlowIndicator.dart';
 import 'package:pragati/widgets/projectCard.dart';
@@ -35,12 +37,14 @@ class _DashboardState extends State<Dashboard>
         ])
   ];
   List<Project> _completedProjects = [];
+  User? _savedUser; // Store the loaded user
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadProjects();
+    _loadUser(); // Load the user details
   }
 
   @override
@@ -49,6 +53,7 @@ class _DashboardState extends State<Dashboard>
     super.dispose();
   }
 
+  // Method to load projects (existing implementation)
   Future<void> _loadProjects() async {
     try {
       final token = await getToken(); // Fetch token from UserController
@@ -68,6 +73,26 @@ class _DashboardState extends State<Dashboard>
       });
     } catch (e) {
       print('Error loading projects: $e');
+    }
+  }
+
+  // Method to load the saved user from SharedPreferences
+  Future<void> _loadUser() async {
+    User? user = await User.getSavedUser();
+    setState(() {
+      _savedUser = user;
+    });
+  }
+
+  // Returns a greeting based on the current time.
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
     }
   }
 
@@ -96,11 +121,19 @@ class _DashboardState extends State<Dashboard>
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Good Morning', style: TextStyle(fontSize: 14)),
-                Text('Shubham!',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              children: [
+                // Dynamically display greeting and user name.
+                Text(
+                  '${_getGreeting()},',
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                ),
+                Text(
+                  _savedUser?.name ?? 'User!', // fallback if user is not loaded
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
               ],
             )
           ],
@@ -154,7 +187,7 @@ class _DashboardState extends State<Dashboard>
               color: Colors.white,
               width: w,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Column(
                   children: [
                     SearchField(),
@@ -204,8 +237,6 @@ class _DashboardState extends State<Dashboard>
                                   .toList(),
                             ),
                           ),
-                          SizedBox(height: 10),
-
                           // Completed Projects
                           SingleChildScrollView(
                             child: Column(

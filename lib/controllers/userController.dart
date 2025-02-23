@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pragati/models/user.dart';
 
 class UserController {
   final String baseUrl = "http://api.pragatione.com";
 
-  Future<void> updateUser(Map<String, dynamic> userData) async {
+  Future<User?> updateUser(Map<String, dynamic> userData) async {
     final String url = "$baseUrl/user/update-user";
 
     try {
@@ -14,9 +15,10 @@ class UserController {
 
       if (token == null) {
         print("Error: Token not found in SharedPreferences.");
-        return;
+        return null;
       }
-
+      print("Token: $token");
+      print("User Data: $userData");
       final response = await http.post(
         Uri.parse(url),
         headers: {
@@ -25,12 +27,20 @@ class UserController {
         },
         body: json.encode(userData),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        print("User updated successfully: ${responseData['message']}");
+        final jsonResponse = jsonDecode(response.body);
+        // Ensure the response is a valid map
+        if (jsonResponse == null || jsonResponse is! Map<String, dynamic>) {
+          print("Error: API response is not a valid JSON object.");
+          return null;
+        }
+
+        // Now deserialize it correctly
+        return User.fromJson(jsonResponse);
       } else {
-        print("Failed to update user: ${response.body}");
+        print("Error updating user: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
       print("Error updating user: $e");
