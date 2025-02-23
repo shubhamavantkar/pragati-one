@@ -49,6 +49,9 @@ class _CashFlowIndicatorState extends State<CashFlowIndicator> {
                         fontSize: w * 0.03, fontWeight: FontWeight.w600),
                   )
                 : SizedBox(),
+            SizedBox(
+              width: 40,
+            ),
             widget.showDropdown
                 ? SizedBox(
                     height: 15,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
 import 'package:pragati/models/project.dart';
+import 'package:pragati/pages/accountScreen.dart';
 import 'package:pragati/pages/assignScreen.dart';
 import 'package:pragati/pages/dashboardScreen.dart';
 import 'package:pragati/pages/materialPage.dart';
@@ -36,9 +37,7 @@ class _ProjectHomePageState extends State<ProjectHomePage> {
       ),
       // ProgressScreen(),
       MaterialScreen(),
-      AssignScreen(
-        project: widget.project,
-      ),
+      AccountScreen()
       // MaterialScreen(),
       // AccountScreen(),
     ];

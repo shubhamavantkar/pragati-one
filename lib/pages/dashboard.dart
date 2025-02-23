@@ -205,7 +205,7 @@ class _DashboardState extends State<Dashboard>
                     ),
                     const SizedBox(height: 10),
                     SizedBox(
-                      height: 314, // Adjust height as needed
+                      height: 314, // Adjust height as neededZA
                       child: TabBarView(
                         controller: _tabController,
                         children: [
