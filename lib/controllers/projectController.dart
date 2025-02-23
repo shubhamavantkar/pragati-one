@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectController {
   final String apiUrl =
@@ -121,32 +122,6 @@ class ProjectController {
     }
   }
 
-  // Method to assign a supervisor to a project
-  Future<Map<String, dynamic>> assignSupervisor(
-      String projectId, String supervisorId, String token) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$apiUrl/projects/assign-supervisor'),
-        headers: {
-          'Authorization': 'Bearer $token', // Send token for authentication
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'projectId': projectId,
-          'supervisorId': supervisorId,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to assign supervisor: ${response.body}');
-      }
-    } catch (error) {
-      throw Exception('Error: $error');
-    }
-  }
-
   // Method to fetch all work orders for a specific project
   Future<List<Map<String, dynamic>>> getAllWorkOrders(
       String projectId, String token) async {
@@ -170,7 +145,8 @@ class ProjectController {
         print('Mapped work orders: $mappedOrders'); // Debug print
         return mappedOrders;
       } else {
-        print('API error: ${response.statusCode} - ${response.body}'); // Debug print
+        print(
+            'API error: ${response.statusCode} - ${response.body}'); // Debug print
         throw Exception('Failed to fetch work orders: ${response.body}');
       }
     } catch (error) {
@@ -198,6 +174,47 @@ class ProjectController {
       }
     } catch (error) {
       throw Exception('Error: $error');
+    }
+  }
+
+  Future<bool> assignSupervisor({
+    required String name,
+    required String mobileNumber,
+    required double salary,
+    required List<Map<String, dynamic>> assignedWorkPackages,
+  }) async {
+    final Uri url = Uri.parse('$apiUrl/project/assign-supervisor');
+// Retrieve the stored token
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('authToken');
+
+    final Map<String, dynamic> requestBody = {
+      "name": name,
+      "mobileNumber": mobileNumber,
+      "salary": salary,
+      "assignedWorkPackages": assignedWorkPackages,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 201) {
+        print("Supervisor assigned successfully: ${response.body}");
+        return true;
+      } else {
+        print("Failed to assign supervisor: ${response.body}");
+        return false;
+      }
+    } catch (error) {
+      print("Error: $error");
+      return false;
     }
   }
 }

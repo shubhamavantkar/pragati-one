@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
-import 'package:pragati/models/supervisor.dart';
 import 'package:pragati/models/vendor.dart';
 import 'package:pragati/widgets/button.dart';
 
@@ -22,6 +21,7 @@ class VendorCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Left column with vendor details
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,11 +35,11 @@ class VendorCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      vendor.name,
+                      vendor.vendorName,
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      'Vendor',
+                      vendor.vendorType,
                       style: TextStyle(fontSize: 12),
                     ),
                     Text(
@@ -57,34 +57,45 @@ class VendorCard extends StatelessWidget {
               color: Colors.grey.shade300,
             ),
             SizedBox(width: 15),
+            // Right side: Work packages and total order value
             Expanded(
-              // Ensures proper layout within Row
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Packages:',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-                  ),
-                  SizedBox(height: 5),
-                  Expanded(
-                    // Ensures proper scrolling
-                    child: ListView.builder(
-                      shrinkWrap: true, // Prevents infinite height issue
-                      physics:
-                          NeverScrollableScrollPhysics(), // Prevents conflict with main scroll
-                      itemCount: vendor.workPackage.length,
+                  if (vendor.assignedWorkPackages.isNotEmpty) ...[
+                    Text(
+                      'Package:', // Display "Package:" only once
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 2),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: vendor.assignedWorkPackages.length,
                       itemBuilder: (context, index) {
-                        return Text(
-                          '${vendor.workPackage[index].packageName}',
-                          style: TextStyle(fontSize: 12),
+                        final package = vendor.assignedWorkPackages[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 8, bottom: 2), // Indent names
+                          child: Text(
+                            '- ${package.workPackageName}', // Display only workPackageName
+                            style: TextStyle(fontSize: 12),
+                          ),
                         );
                       },
                     ),
+                  ],
+                  SizedBox(height: 5),
+                  Text(
+                    'Order Value: ₹${vendor.totalOrderValue}',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
+
+            // "Add More" button
             Align(
               alignment: Alignment.bottomRight,
               child: SizedBox(
