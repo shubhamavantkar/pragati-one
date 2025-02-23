@@ -47,10 +47,8 @@ class _AssignSupervisorState extends State<AssignSupervisor> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SearchField(
-            hintText: 'Search Supervisor',
-          ),
-          SizedBox(height: 30),
+          SearchField(hintText: 'Search Supervisor'),
+          SizedBox(height: 20),
           Expanded(
             child: _supervisors.isNotEmpty
                 ? ListView.builder(
@@ -59,11 +57,16 @@ class _AssignSupervisorState extends State<AssignSupervisor> {
                       return SupervisorCard(supervisor: _supervisors[index]);
                     },
                   )
-                : Center(
-                    child: Image.asset(
-                      'assets/supervisor.png',
-                      height: 150,
-                    ),
+                : Column(
+                    children: [
+                      SizedBox(height: 150),
+                      Center(
+                        child: Image.asset(
+                          'assets/supervisor.png',
+                          height: 150,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ],
