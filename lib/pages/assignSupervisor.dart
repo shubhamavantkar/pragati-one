@@ -5,6 +5,7 @@ import 'package:pragati/models/supervisor.dart';
 import 'package:pragati/pages/assignSupervisorForm.dart';
 import 'package:pragati/widgets/searchField.dart';
 import 'package:pragati/widgets/supervisorCard.dart';
+import 'package:pragati/controllers/projectController.dart'; // Import the API function
 
 class AssignSupervisor extends StatefulWidget {
   final Project project;
@@ -16,6 +17,31 @@ class AssignSupervisor extends StatefulWidget {
 
 class _AssignSupervisorState extends State<AssignSupervisor> {
   List<Supervisor> _supervisors = [];
+  bool _isLoading = true; // Loading indicator
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSupervisors(); // Fetch supervisors when the page loads
+  }
+
+  Future<void> _loadSupervisors() async {
+    try {
+      ProjectController projectController = ProjectController();
+      List<Supervisor> fetchedSupervisors =
+          await projectController.fetchSupervisors(widget.project.projectId);
+      setState(() {
+        _supervisors = fetchedSupervisors;
+        _isLoading = false;
+      });
+      print(fetchedSupervisors);
+    } catch (e) {
+      print("Error fetching supervisors: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,24 +76,28 @@ class _AssignSupervisorState extends State<AssignSupervisor> {
           SearchField(hintText: 'Search Supervisor'),
           SizedBox(height: 20),
           Expanded(
-            child: _supervisors.isNotEmpty
-                ? ListView.builder(
-                    itemCount: _supervisors.length,
-                    itemBuilder: (context, index) {
-                      return SupervisorCard(supervisor: _supervisors[index]);
-                    },
-                  )
-                : Column(
-                    children: [
-                      SizedBox(height: 150),
-                      Center(
-                        child: Image.asset(
-                          'assets/supervisor.png',
-                          height: 150,
-                        ),
+            child: _isLoading
+                ? Center(
+                    child: CircularProgressIndicator()) // Show loading spinner
+                : _supervisors.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _supervisors.length,
+                        itemBuilder: (context, index) {
+                          return SupervisorCard(
+                              supervisor: _supervisors[index]);
+                        },
+                      )
+                    : Column(
+                        children: [
+                          SizedBox(height: 150),
+                          Center(
+                            child: Image.asset(
+                              'assets/supervisor.png',
+                              height: 150,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
           ),
         ],
       ),
