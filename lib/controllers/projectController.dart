@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pragati/models/supervisor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectController {
@@ -215,6 +216,33 @@ class ProjectController {
     } catch (error) {
       print("Error: $error");
       return false;
+    }
+  }
+
+  Future<List<Supervisor>> fetchSupervisors(String projectId) async {
+    final Uri url = Uri.parse('$apiUrl/project/$projectId/supervisors');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('authToken');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Supervisor.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load supervisors: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching supervisors: $e');
+      return [];
     }
   }
 }
