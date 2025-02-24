@@ -30,17 +30,17 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      mobile: json['mobile'],
-      role: json['role'],
-      isPhoneVerified: json['isPhoneVerified'],
-      gstNumber: json['GSTNumber'],
-      companyName: json['companyName'],
-      email: json['email'],
-      employeesCount: json['employeesCount'],
-      name: json['name'],
-      workingType: json['workingType'],
-      yearlyTurnover: json['yearlyTurnover'],
-      otherWorkingType: json['otherWorkingType'],
+      mobile: json['mobile'] ?? '',
+      role: json['role'] ?? '',
+      isPhoneVerified: json['isPhoneVerified'] ?? false,
+      gstNumber: json['GSTNumber'] ?? '',
+      companyName: json['companyName'] ?? '',
+      email: json['email'] ?? '',
+      employeesCount: json['employeesCount'] ?? 0,
+      name: json['name'] ?? '',
+      workingType: json['workingType'] ?? '',
+      yearlyTurnover: json['yearlyTurnover'] ?? 0,
+      otherWorkingType: json['otherWorkingType'] ?? '',
     );
   }
 

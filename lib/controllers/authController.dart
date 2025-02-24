@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pragati/models/user.dart';
 
 class AuthController {
   final String baseUrl = "http://api.pragatione.com";
@@ -31,50 +32,51 @@ class AuthController {
         return false;
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error: $e', backgroundColor: Colors.redAccent);
+      Fluttertoast.showToast(
+          msg: 'Error: $e', backgroundColor: Colors.redAccent);
       return false;
     }
   }
 
-  Future<bool> verifyOtp(String phoneNumber, String otp) async {
-  try {
-    final response = await http.post(
-      Uri.parse("$baseUrl/user/register"),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'mobile': phoneNumber,
-        'otp': otp,
-      }),
-    );
+  Future<Object> verifyOtp(String phoneNumber, String otp) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/register"),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'mobile': phoneNumber,
+          'otp': otp,
+        }),
+      );
+      if (response.statusCode == 201) {
+        final responseData = json.decode(response.body);
 
-    print(response.statusCode);
-    if (response.statusCode == 201) {
-      final responseData = json.decode(response.body);
+        if (responseData.containsKey('token')) {
+          final String token =
+              responseData['token']; // The authentication token
 
-      if (responseData.containsKey('token')) {
-        final String token = responseData['token']; // The authentication token
+          // Retrieve SharedPreferences instance.
+          final prefs = await SharedPreferences.getInstance();
+          // Save the token.
+          await prefs.setString('authToken', token);
 
-        // Optionally, you can save the token or use it in your app
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', token);
-        Fluttertoast.showToast(
-            msg: responseData['message'], backgroundColor: Colors.green);
+          Fluttertoast.showToast(
+            msg: responseData['message'],
+            backgroundColor: Colors.green,
+          );
+          final user = responseData['user'];
+          return {'success': true, 'user': user};
 
-        return true; // OTP verified successfully
+        } else {
+          return false; // Token not found in response
+        }
       } else {
-        return false; // Token not found in response
+        return false; // OTP verification failed or wrong status code
       }
-    } else {
-      return false; // OTP verification failed or wrong status code
+    } catch (e) {
+      // Handle error (e.g., network issues)
+      print('Error: $e');
+      return false;
     }
-  } catch (e) {
-    // Handle error (e.g., network issues)
-    print('Error: $e');
-    return false;
   }
 }
-}
-
-
-
-

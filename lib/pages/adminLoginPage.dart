@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phonenumbers/phonenumbers.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pragati/controllers/authController.dart';
 import 'package:pragati/pages/registerForm.dart';
 import 'package:pragati/widgets/loadingDialog.dart';
@@ -134,32 +136,52 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                               Navigator.of(context)
                                   .pop(); // Close loading dialog
                             }
+                            print(isOtpVerified);
+                            if ((isOtpVerified
+                                as Map<String, dynamic>)['success']) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
 
-                            if (isOtpVerified) {
-                              // Check if user data exists in SharedPreferences
-                              final user = await User.getSavedUser();
+                              // Check for saved user data
+                              User? savedUser = await User.getSavedUser();
 
-                              if (context.mounted) {
-                                if (user != null) {
-                                  // User exists - navigate to Dashboard
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DashboardScreen()),
-                                  );
-                                } else {
-                                  // New user - navigate to Registration
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RegisterFormPage()),
-                                  );
-                                }
+                              if (savedUser == null &&
+                                  isOtpVerified.containsKey('user')) {
+                                // Extract user data from API response
+                                final userData = isOtpVerified[
+                                    'user']; // responseData['user']
+                                final user = User.fromJson(userData);
+
+                                // Store user data in SharedPreferences
+                                await prefs.setString(
+                                    'userData', json.encode(user.toJson()));
+
+                                // Update savedUser reference after storing it
+                                savedUser = user;
+                              }
+
+                              // Check if required fields are missing
+                              if (savedUser == null ||
+                                  savedUser.name.isEmpty ||
+                                  savedUser.companyName.isEmpty) {
+                                // Redirect to RegisterFormPage for missing details
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterFormPage()),
+                                );
+                              } else {
+                                // Redirect to DashboardScreen if all required details exist
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardScreen()),
+                                );
                               }
                             } else {
+                              // OTP verification failed: show an error toast
                               Fluttertoast.showToast(
-                                msg:
-                                    "OTP verification failed. Please try again.",
+                                msg: isOtpVerified.containsKey('message')
+                                    ? isOtpVerified['message']
+                                    : "OTP verification failed. Please try again.",
                                 backgroundColor: Colors.redAccent,
                               );
                             }

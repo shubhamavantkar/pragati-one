@@ -90,9 +90,7 @@ class _AssignScreenState extends State<AssignScreen> {
               padding: EdgeInsets.all(16),
               color: Colors.white,
               child: _assignVendor
-                  ? AssignVendorScreen(
-                      project: widget.project,
-                    )
+                  ? AssignVendorScreen(project: widget.project)
                   : AssignSupervisor(
                       project: widget.project,
                     ),
