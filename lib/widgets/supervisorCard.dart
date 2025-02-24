@@ -75,7 +75,7 @@ class SupervisorCard extends StatelessWidget {
                       itemCount: supervisor.workPackage.length,
                       itemBuilder: (context, index) {
                         return Text(
-                          '${supervisor.workPackage[index].packageName}',
+                          '${supervisor.workPackage[index].workPackageName}',
                           style: TextStyle(fontSize: 12),
                         );
                       },
