@@ -27,7 +27,7 @@ class VendorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/supervisorFull.png',
+                  'assets/vendorFull.png',
                   height: 40,
                 ),
                 SizedBox(height: 10),
