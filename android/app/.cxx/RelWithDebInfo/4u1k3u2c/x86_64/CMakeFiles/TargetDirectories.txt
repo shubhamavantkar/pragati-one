@@ -1,2 +1,0 @@
-F:/Pragati/Projects-Development/Active-Projects/pragati-one/android/app/.cxx/RelWithDebInfo/4u1k3u2c/x86_64/CMakeFiles/edit_cache.dir
-F:/Pragati/Projects-Development/Active-Projects/pragati-one/android/app/.cxx/RelWithDebInfo/4u1k3u2c/x86_64/CMakeFiles/rebuild_cache.dir

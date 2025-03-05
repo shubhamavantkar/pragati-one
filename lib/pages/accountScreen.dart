@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/controllers/accounts.controller.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/materialRecoinsilationPage.dart';
 import 'package:pragati/pages/packageRecoinsilationPage.dart';
 import 'package:pragati/pages/vendorRecoinsilation.dart';
@@ -8,7 +12,8 @@ import 'package:pragati/widgets/formDropDown.dart';
 import 'package:pragati/widgets/formTextField.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  final Project project;
+  const AccountScreen({super.key, required this.project});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -110,7 +115,7 @@ class _AccountScreenState extends State<AccountScreen> {
             height: 10,
           ),
           _accountType[1]
-              ? Expanded(child: AccountsAccount())
+              ? Expanded(child: AccountsAccount(project: widget.project))
               : _accountType[0]
                   ? Expanded(child: PayableAccount())
                   : Expanded(child: ReceivableAccount())
@@ -591,10 +596,91 @@ class PayableAccount extends StatelessWidget {
   }
 }
 
-class AccountsAccount extends StatelessWidget {
-  const AccountsAccount({
-    super.key,
-  });
+class AccountsAccount extends StatefulWidget {
+  final Project project;
+  const AccountsAccount({super.key, required this.project});
+  @override
+  _AccountsAccountState createState() => _AccountsAccountState();
+}
+
+class _AccountsAccountState extends State<AccountsAccount> {
+  final AccountsApiService apiService = AccountsApiService();
+  List<Map<String, dynamic>> accounts = [];
+  bool isLoading = true;
+
+  // Declare these as state variables:
+  String? depositId;
+  String? withdrawalId;
+  String? addMoneyAccId;
+
+  // Controllers for date, amount, remarks, etc.
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _remarkController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAccounts();
+  }
+
+  Future<void> fetchAccounts() async {
+    try {
+      String projectId = widget.project.projectId;
+      List<Map<String, dynamic>> data =
+          await apiService.getAllAccounts(projectId);
+
+      setState(() {
+        accounts = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching accounts: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      // Format as "DD MMM YYYY"
+      final day = date.day.toString().padLeft(2, '0');
+      final month = _monthName(date.month);
+      final year = date.year.toString();
+      return '$day $month $year';
+    } catch (e) {
+      return dateStr; // Fallback in case of parsing error
+    }
+  }
+
+  String _monthName(int month) {
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return months[month];
+  }
+
+  double _calculateTotalAmount() {
+    double total = 0;
+    for (var account in accounts) {
+      total += (account['totalAmount'] as num?)?.toDouble() ?? 0;
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -689,15 +775,46 @@ class AccountsAccount extends StatelessWidget {
                                         Divider(),
                                         FormDropdown(
                                           label: 'Deposit to',
-                                          items: ['Cash', 'Online'],
+                                          items: accounts
+                                              .map((account) =>
+                                                  account['name'] as String)
+                                              .toList(),
                                           hintText: 'Deposit to',
-                                          onChanged: (s) {},
+                                          onChanged: (selectedAccount) {
+                                            final account = accounts.firstWhere(
+                                                (acc) =>
+                                                    acc['name'] ==
+                                                    selectedAccount,
+                                                orElse: () => {});
+                                            depositId = account['_id'];
+                                            // Optionally, you can create JSON data here for debugging:
+                                            final jsonData = {
+                                              'selectedAccountId': depositId,
+                                            };
+                                            print(
+                                                "Deposit: ${jsonEncode(jsonData)}");
+                                          },
                                         ),
                                         FormDropdown(
                                           label: 'Withdraw',
-                                          items: ['Cash', 'Online'],
+                                          items: accounts
+                                              .map((account) =>
+                                                  account['name'] as String)
+                                              .toList(),
                                           hintText: 'Withdraw',
-                                          onChanged: (s) {},
+                                          onChanged: (selectedAccount) {
+                                            final account = accounts.firstWhere(
+                                                (acc) =>
+                                                    acc['name'] ==
+                                                    selectedAccount,
+                                                orElse: () => {});
+                                            withdrawalId = account['_id'];
+                                            final jsonData = {
+                                              'selectedAccountId': withdrawalId,
+                                            };
+                                            print(
+                                                "Withdraw: ${jsonEncode(jsonData)}");
+                                          },
                                         ),
                                         GestureDetector(
                                           onTap: () async {
@@ -748,8 +865,73 @@ class AccountsAccount extends StatelessWidget {
                                           height: 5,
                                         ),
                                         PragatiButton(
-                                            onPressed: () {},
-                                            child: Text('Transfer'))
+                                          onPressed: () async {
+                                            // Check if any required field is null or empty
+                                            if (depositId == null ||
+                                                withdrawalId == null ||
+                                                _dateController.text.isEmpty ||
+                                                _amountController
+                                                    .text.isEmpty) {
+                                              print(
+                                                  "Please fill in all fields.");
+                                              // Optionally, show a message to the user
+                                              return;
+                                            }
+
+                                            // Prepare transfer data and call the API, for example:
+                                            final transferData = {
+                                              "date": _dateController.text,
+                                              "amount": double.tryParse(
+                                                      _amountController.text) ??
+                                                  0,
+                                              "remarks": _remarkController.text,
+                                            };
+
+                                            print(
+                                                "Transfer Data: ${jsonEncode(transferData)}");
+                                            // API call here...
+                                            try {
+                                              final result =
+                                                  await AccountsApiService()
+                                                      .transferMoney(
+                                                withdrawalId!, // sender account ID
+                                                depositId!, // receiver account ID
+                                                transferData,
+                                              );
+                                              print(
+                                                  "Transfer successful: $result");
+                                              // Show a green SnackBar for success
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "Transfer successful"),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                              Navigator.pop(
+                                                  context); // Close the modal on success
+                                            } catch (e) {
+                                              print("Transfer failed: $e");
+                                              String errorMessage =
+                                                  e.toString();
+                                              if (errorMessage.contains(
+                                                  "Insufficient balance")) {
+                                                errorMessage =
+                                                    "Insufficient balance";
+                                              }
+                                              // Show the error message without closing the modal
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(errorMessage),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: const Text('Transfer'),
+                                        )
                                       ],
                                     ),
                                   );
@@ -811,154 +993,285 @@ class AccountsAccount extends StatelessWidget {
                               return StatefulBuilder(
                                 builder: (context, setState) {
                                   return Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'Add/Reduce Money',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        Divider(),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            ElevatedButton.icon(
-                                              icon: Image.asset(
-                                                  'assets/add-reduce.png',
-                                                  height: 20),
-                                              label: Text('Add Money'),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _selectedOption = 'Add Money';
-                                                });
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                elevation: 0,
-                                                backgroundColor:
-                                                    _selectedOption ==
-                                                            'Add Money'
-                                                        ? primaryColor
-                                                            .withAlpha(20)
-                                                        : Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                    color: primaryColor,
-                                                    width: 0.5,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            ),
-                                            ElevatedButton.icon(
-                                              icon: Image.asset(
-                                                  'assets/add-reduce.png',
-                                                  height: 20),
-                                              label: Text('Reduce Money'),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _selectedOption =
-                                                      'Reduce Money';
-                                                });
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                elevation: 0,
-                                                backgroundColor:
-                                                    _selectedOption ==
-                                                            'Reduce Money'
-                                                        ? primaryColor
-                                                            .withAlpha(20)
-                                                        : Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                    color: primaryColor,
-                                                    width: 0.5,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 10),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await _pickDate();
-                                            setState(
-                                                () {}); // Refresh the modal sheet UI
-                                          },
-                                          child: AbsorbPointer(
-                                            child: FormTextField(
-                                              suffix: Icon(
-                                                Icons.calendar_month,
-                                                color: Colors.grey.shade300,
-                                              ),
-                                              controller: _dateController,
-                                              hintText: 'Date',
-                                              label: 'Date',
-                                              prefixImage: const SizedBox(),
-                                            ),
-                                          ),
-                                        ),
-                                        FormDropdown(
-                                          label: 'Cash',
-                                          items: ['Cash', 'Online'],
-                                          hintText: 'Cash',
-                                          onChanged: (s) {},
-                                        ),
-                                        FormTextField(
-                                          controller: _amountController,
-                                          hintText: 'Enter Rate',
-                                          label: 'Amount*',
-                                          prefixImage: const SizedBox(),
-                                        ),
-                                        FormTextField(
-                                          controller: _remarkController,
-                                          hintText: 'Add Remarks...',
-                                          label: 'Remarks',
-                                          prefixImage: const SizedBox(),
-                                          keyboardType: TextInputType.multiline,
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'New Amount',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            Text(
-                                              'Rs. 1,74,350',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 5),
-                                        PragatiButton(
-                                          onPressed: () {
-                                            // Save logic here
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            'Save',
+                                    padding: const EdgeInsets.all(16),
+                                    child: Form(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            'Add/Reduce Money',
                                             style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const Divider(),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ElevatedButton.icon(
+                                                icon: Image.asset(
+                                                    'assets/add-reduce.png',
+                                                    height: 20),
+                                                label: const Text('Add Money'),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _selectedOption =
+                                                        'Add Money';
+                                                  });
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor:
+                                                      _selectedOption ==
+                                                              'Add Money'
+                                                          ? primaryColor
+                                                              .withAlpha(20)
+                                                          : Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color: primaryColor,
+                                                      width: 0.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                ),
+                                              ),
+                                              ElevatedButton.icon(
+                                                icon: Image.asset(
+                                                    'assets/add-reduce.png',
+                                                    height: 20),
+                                                label:
+                                                    const Text('Reduce Money'),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _selectedOption =
+                                                        'Reduce Money';
+                                                  });
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor:
+                                                      _selectedOption ==
+                                                              'Reduce Money'
+                                                          ? primaryColor
+                                                              .withAlpha(20)
+                                                          : Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color: primaryColor,
+                                                      width: 0.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              await _pickDate();
+                                              setState(() {}); // Refresh UI
+                                            },
+                                            child: AbsorbPointer(
+                                              child: FormTextField(
+                                                suffix: Icon(
+                                                  Icons.calendar_month,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                controller: _dateController,
+                                                hintText: 'Date',
+                                                label: 'Date',
+                                                prefixImage: const SizedBox(),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                          FormDropdown(
+                                            label: 'Account',
+                                            items: accounts
+                                                .map((account) =>
+                                                    account['name'] as String)
+                                                .toList(),
+                                            hintText: 'Select Account',
+                                            onChanged: (selectedAccount) {
+                                              final account =
+                                                  accounts.firstWhere(
+                                                (acc) =>
+                                                    acc['name'] ==
+                                                    selectedAccount,
+                                                orElse: () => {},
+                                              );
+                                              addMoneyAccId = account['_id'];
+                                              print(
+                                                  "Selected Account ID: $addMoneyAccId");
+                                            },
+                                          ),
+                                          FormTextField(
+                                            controller: _amountController,
+                                            hintText: 'Enter Amount',
+                                            label: 'Amount*',
+                                            prefixImage: const SizedBox(),
+                                            keyboardType: TextInputType.number,
+                                          ),
+                                          FormTextField(
+                                            controller: _remarkController,
+                                            hintText: 'Add Remarks...',
+                                            label: 'Remarks',
+                                            prefixImage: const SizedBox(),
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: const [
+                                              Text(
+                                                'New Amount',
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                              Text(
+                                                'Rs. 1,74,350',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 5),
+                                          PragatiButton(
+                                            onPressed: () async {
+                                              // Validate required fields
+                                              if (addMoneyAccId == null ||
+                                                  _dateController
+                                                      .text.isEmpty ||
+                                                  _amountController
+                                                      .text.isEmpty) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        "Please fill in all required fields."),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                                return;
+                                              }
+
+                                              // Prepare request data common to both add and reduce actions.
+                                              final Map<String, dynamic>
+                                                  requestBody = {
+                                                "date": _dateController
+                                                    .text, // ideally in ISO8601 format
+                                                "amount": double.tryParse(
+                                                        _amountController
+                                                            .text) ??
+                                                    0,
+                                                // "remarks" field is used only for add money API in our example.
+                                                "remarks":
+                                                    _remarkController.text,
+                                              };
+
+                                              // Check toggle and call the appropriate API
+                                              if (_selectedOption ==
+                                                  'Add Money') {
+                                                try {
+                                                  final result =
+                                                      await AccountsApiService()
+                                                          .addMoneyToAccount(
+                                                              addMoneyAccId!,
+                                                              requestBody);
+                                                  print(
+                                                      "Add money successful: $result");
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          "Money added successfully."),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                    ),
+                                                  );
+                                                  Navigator.pop(
+                                                      context); // Close the modal on success
+                                                } catch (e) {
+                                                  print("Add money failed: $e");
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content:
+                                                          Text("Error: $e"),
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                    ),
+                                                  );
+                                                }
+                                              } else if (_selectedOption ==
+                                                  'Reduce Money') {
+                                                // For reducing money, we assume remarks may not be needed.
+                                                // Remove "remarks" if your API doesn't expect it.
+                                                final Map<String, dynamic>
+                                                    reduceRequestBody = {
+                                                  "date": _dateController.text,
+                                                  "amount":
+                                                      _amountController.text,
+                                                  // "remarks" field is used only for add money API in our example.
+                                                  "remarks":
+                                                      _remarkController.text,
+                                                };
+
+                                                try {
+                                                  final result =
+                                                      await AccountsApiService()
+                                                          .reduceMoneyFromAccount(
+                                                              addMoneyAccId!,
+                                                              reduceRequestBody);
+                                                  print(
+                                                      "Reduce money successful: $result");
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          "Money reduced successfully."),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                    ),
+                                                  );
+                                                  Navigator.pop(
+                                                      context); // Close the modal on success
+                                                } catch (e) {
+                                                  print(
+                                                      "Reduce money failed: $e");
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content:
+                                                          Text("Error: $e"),
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            child: const Text(
+                                              'Save',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -995,9 +1308,15 @@ class AccountsAccount extends StatelessWidget {
                 height: 20,
               ),
               Text('Total Amount'),
-              Text(
-                'Rs. 8,420.00',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 30),
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: _calculateTotalAmount()),
+                duration: Duration(seconds: 2), // Adjust duration as needed
+                builder: (context, value, child) {
+                  return Text(
+                    'Rs. ${value.toStringAsFixed(2)}',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 30),
+                  );
+                },
               ),
               Row(
                 children: [
@@ -1042,24 +1361,20 @@ class AccountsAccount extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    TransactionCard(
-                      amount: 2324,
-                      date: '22 Sept 2024',
-                      mode: 'Online',
-                      name: 'Prasad Patil',
-                    ),
-                    TransactionCard(
-                      amount: 2324,
-                      date: '22 Sept 2024',
-                      mode: 'Online',
-                      name: 'Prasad Patil',
-                    ),
-                    TransactionCard(
-                      amount: 2324,
-                      date: '22 Sept 2024',
-                      mode: 'Online',
-                      name: 'Prasad Patil',
-                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: accounts.length,
+                      itemBuilder: (context, index) {
+                        final account = accounts[index];
+                        return TransactionCard(
+                          name: account['name'] ?? 'Unnamed',
+                          mode: account['accountType'] ?? '',
+                          amount: account['totalAmount'] ?? 0,
+                          date: _formatDate(account['createdAt'] ?? ''),
+                        );
+                      },
+                    )
                   ],
                 ),
               )

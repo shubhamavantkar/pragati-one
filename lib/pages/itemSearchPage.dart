@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/item.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/searchField.dart';
 
 class ItemSearchPage extends StatefulWidget {
-  const ItemSearchPage({super.key});
+  final List<Item> items;
+  const ItemSearchPage({Key? key, required this.items}) : super(key: key);
 
   @override
   State<ItemSearchPage> createState() => _ItemSearchPageState();
 }
 
 class _ItemSearchPageState extends State<ItemSearchPage> {
+  // This list will be updated based on search input.
+  late List<Item> displayedItems;
+
+  @override
+  void initState() {
+    super.initState();
+    displayedItems = widget.items;
+    print('Items: ${widget.items}');
+    for (var item in displayedItems) {
+      print(item.itemName);
+      print(item.unit);
+      print(item.rate);
+      print(item.quantity);
+      print(item.amount);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;

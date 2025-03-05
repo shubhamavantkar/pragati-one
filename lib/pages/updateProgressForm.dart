@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/item.dart';
 import 'package:pragati/pages/itemSearchPage.dart';
 import 'package:pragati/widgets/button.dart';
 import 'package:pragati/widgets/formDropDown.dart';
@@ -21,7 +22,7 @@ class _UpdateProgressFormState extends State<UpdateProgressForm> {
   TextEditingController _quantityOfWorkDoneController = TextEditingController();
 
   List<Map<String, dynamic>> additionalFields = [];
-
+  late final List<Item> items;
   void _showAddFieldDialog() {
     TextEditingController fieldController = TextEditingController();
     showDialog(
@@ -364,7 +365,9 @@ class _UpdateProgressFormState extends State<UpdateProgressForm> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ItemSearchPage(),
+                            builder: (context) => ItemSearchPage(
+                              items: [],
+                            ),
                           ));
                     },
                     outlinedButton: true,

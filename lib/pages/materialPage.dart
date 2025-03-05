@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/issuematerial.dart';
 import 'package:pragati/pages/receivedMaterial.dart';
 import 'package:pragati/pages/recoinsilationMaterial.dart';
@@ -8,7 +9,8 @@ import 'package:pragati/widgets/materialStatusToggleSwitch.dart';
 import 'package:pragati/widgets/searchField.dart';
 
 class MaterialScreen extends StatefulWidget {
-  const MaterialScreen({super.key});
+  final Project project;
+  const MaterialScreen({super.key, required this.project});
 
   @override
   State<MaterialScreen> createState() => _MaterialScreenState();
@@ -118,7 +120,9 @@ class _MaterialScreenState extends State<MaterialScreen> {
               padding: EdgeInsets.all(16),
               color: Colors.white,
               child: _materialType[0]
-                  ? ReceivedMaterial()
+                  ? ReceivedMaterial(
+                      project: widget.project,
+                    )
                   : _materialType[1]
                       ? IssueMaterial()
                       : RecoinsilationMaterial(),

@@ -244,7 +244,9 @@ class _IssueFormState extends State<IssueForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ItemSearchPage(),
+                              builder: (context) => ItemSearchPage(
+                                items: [],
+                              ),
                             ));
                       })
                 ],

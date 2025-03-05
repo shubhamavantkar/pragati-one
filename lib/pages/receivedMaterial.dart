@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pragati/constants/consts.dart';
+import 'package:pragati/models/project.dart';
 import 'package:pragati/pages/receivedForm.dart';
 import 'package:pragati/widgets/materialStatusToggleSwitch.dart';
 import 'package:pragati/widgets/searchField.dart';
 
 class ReceivedMaterial extends StatelessWidget {
+  final Project project;
   const ReceivedMaterial({
     super.key,
+    required this.project,
   });
 
   @override
@@ -20,7 +23,9 @@ class ReceivedMaterial extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceivedForm(),
+                builder: (context) => ReceivedForm(
+                  project: project,
+                ),
               ));
         },
         child: Icon(

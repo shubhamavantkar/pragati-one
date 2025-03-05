@@ -36,8 +36,12 @@ class _ProjectHomePageState extends State<ProjectHomePage> {
         project: widget.project,
       ),
       // ProgressScreen(),
-      MaterialScreen(),
-      AccountScreen()
+      MaterialScreen(
+        project: widget.project,
+      ),
+      AccountScreen(
+        project: widget.project,
+      )
       // MaterialScreen(),
       // AccountScreen(),
     ];
